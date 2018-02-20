@@ -1,0 +1,16 @@
+Web3 = require('web3');
+Cashjs = require('bitcoincashjs');
+WatchingWallet = require('./lib/watchingwallet');
+KeyChain = require('./lib/keychain');
+BlockCypherProvider = require('./lib/blockcypherprovider');
+BlockchainInfoProvider = require('./lib/blockchaininfoprovider');
+InsightProvider = require('./lib/insightprovider');
+Utils = require('./lib/utils');
+CompoundKey = require('./lib/compoundkey');
+Transaction = require('./lib/transaction/transaction');
+BitcoinTransaction = require('./lib/transaction/bitcointransaction');
+BitcoinCashTransaction = require('./lib/transaction/bitcoincashtransaction');
+SchnorrProof = require('./lib/schnorrproof');
+PaillierProof = require('./lib/paillierproof');
+PedersenScheme = require('./lib/pedersenscheme');
+DDS = require('./lib/dds').set(Web3);
