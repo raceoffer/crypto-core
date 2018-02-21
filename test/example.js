@@ -5,17 +5,18 @@ const bcoinLib = require('..');
 
 const bcoin = bcoinLib.bcoin;
 
-const cash = require('bitcoincashjs');
-
 const WatchingWallet = bcoinLib.watchingWallet;
 const InsightProvider = bcoinLib.insightProvider;
 const BlockchainInfoProvider = bcoinLib.blockchainInfoProvider;
 const CompoundKey = bcoinLib.compoundKey;
 const KeyChain = bcoinLib.keyChain;
 const Utils = bcoinLib.utils;
-const Transaction = bcoinLib.transaction;
+const BitcoreTransaction = bcoinLib.bitcoreTransaction;
 const BitcoinTransaction = bcoinLib.bitcoinTransaction;
 const BitcoinCashTransaction = bcoinLib.bitcoinCashTransaction;
+const EthereumTransaction = bcoinLib.ethereumTransaction;
+const EthereumWallet = bcoinLib.ethereumWallet;
+const Currency = bcoinLib.currency;
 
 const DDS = bcoinLib.dds;
 
@@ -173,19 +174,15 @@ const compoundTest = async function () {
   const initiatorKeyChain = KeyChain.fromSeed(initiatorSeed);
   const verifierKeyChain = KeyChain.fromSeed(verifierSeed);
 
-  const bitcoinWallet = await bitcoinSync(initiatorKeyChain, verifierKeyChain);
-  const bitcoinCashWallet = await bitcoinCashSync(initiatorKeyChain, verifierKeyChain);
+  const ethereum = await ethereumSync(initiatorKeyChain, verifierKeyChain);
+  const bitcoin = await bitcoinSync(initiatorKeyChain, verifierKeyChain);
+  const bitcoinCash = await bitcoinCashSync(initiatorKeyChain, verifierKeyChain);
 
   await new Promise(res => setTimeout(res, 5000));
 
-  await bitcoinSend(bitcoinWallet, bitcoinWallet.wallet.getAddress('base58'), 10000);
-
-  const publicKey = new cash.PublicKey(
-    bitcoinCashWallet.wallet.getPublicKey(), {
-      network: 'testnet'
-    });
-
-  await bitcoinCashSend(bitcoinCashWallet, publicKey.toAddress().toString(), 10000);
+  await ethereumSend(ethereum, ethereum.wallet.address, 1000);
+  await bitcoinSend(bitcoin, bitcoin.wallet.getAddress('base58'), 1000);
+  await bitcoinCashSend(bitcoinCash, bitcoinCash.wallet.getAddress('base58'), 1000);
 
   console.log("OK");
 };
@@ -253,16 +250,69 @@ const sign = async function (transaction, initiator, verifier) {
   transaction.applySignatures(signatures);
 };
 
-const bitcoinSync = async function (initiatorKeyChain, verifierKeyChain) {
-  const initiatorKey = bcoin.keyring.fromPrivate(initiatorKeyChain.getAccountSecret(0, 0));
-  const verifierKey  = bcoin.keyring.fromPrivate(verifierKeyChain.getAccountSecret(0, 0));
+const ethereumSync = async function (initiatorKeyChain, verifierKeyChain) {
+  const initiatorKey = CompoundKey.keyFromSecret(initiatorKeyChain.getAccountSecret(60, 0));
+  const verifierKey  = CompoundKey.keyFromSecret(verifierKeyChain.getAccountSecret(60, 0));
 
   const initiator = new CompoundKey({
-    localPrivateKeyring: initiatorKey
+    localPrivateKey: initiatorKey
   });
 
   const verifier = new CompoundKey({
-    localPrivateKeyring: verifierKey
+    localPrivateKey: verifierKey
+  });
+
+  await sync(initiator, verifier);
+
+  const currency = Currency.get(Currency.ETH);
+
+  const wallet = await new EthereumWallet({
+    address: currency.address(initiator.getCompoundPublicKey()),
+    network: network
+  }).load();
+
+  console.log('Balance', wallet.fromWei(await wallet.getBalance(), 'ether'));
+  wallet.on('balance', (balance) => {
+    console.log('Balance', wallet.fromWei(balance, 'ether'));
+  });
+
+  return {
+    wallet,
+    initiator,
+    verifier
+  };
+};
+
+const ethereumSend = async function(ethereum, to, value) {
+  const transaction = EthereumTransaction.fromOptions({
+    network: EthereumTransaction.Testnet
+  });
+
+  await transaction.prepare({
+    wallet: ethereum.wallet,
+    from: ethereum.wallet.address,
+    to: to,
+    value: value,
+    gasPrice: ethereum.wallet.toWei('5', 'gwei')
+  });
+
+  await sign(transaction, ethereum.initiator, ethereum.verifier);
+
+  const raw = transaction.toRaw();
+
+  return await ethereum.wallet.sendSignedTransaction(raw);
+};
+
+const bitcoinSync = async function (initiatorKeyChain, verifierKeyChain) {
+  const initiatorKey = CompoundKey.keyFromSecret(initiatorKeyChain.getAccountSecret(0, 0));
+  const verifierKey  = CompoundKey.keyFromSecret(verifierKeyChain.getAccountSecret(0, 0));
+
+  const initiator = new CompoundKey({
+    localPrivateKey: initiatorKey
+  });
+
+  const verifier = new CompoundKey({
+    localPrivateKey: verifierKey
   });
 
   await sync(initiator, verifier);
@@ -276,11 +326,13 @@ const bitcoinSync = async function (initiatorKeyChain, verifierKeyChain) {
 
   await walletdb.open();
 
-  // The wallet is intended to watch over the full public key
+  const keyring = bcoin.keyring.fromPublic(Buffer.from(initiator.getCompoundPublicKey().encode(true, 'array')));
+
+// The wallet is intended to watch over the full public key
   const wallet = await new WatchingWallet({
     accounts: [{
-      name: initiator.getCompoundKeyAddress('base58'),
-      key: initiator.compoundPublicKeyring
+      name: keyring.getKeyAddress('base58'),
+      key: keyring
     }]
   }).load(walletdb);
 
@@ -330,7 +382,7 @@ const bitcoinSync = async function (initiatorKeyChain, verifierKeyChain) {
 
 const bitcoinSend = async function (wallet, address, value) {
   const transaction = BitcoinTransaction.fromOptions({
-    network: Transaction.Testnet
+    network: BitcoreTransaction.Testnet
   });
 
   await transaction.prepare({
@@ -338,8 +390,6 @@ const bitcoinSend = async function (wallet, address, value) {
     address: address,
     value: value
   });
-
-  const total = transaction.totalOutputs();
 
   await sign(transaction, wallet.initiator, wallet.verifier);
 
@@ -351,15 +401,15 @@ const bitcoinSend = async function (wallet, address, value) {
 };
 
 const bitcoinCashSync = async function (initiatorKeyChain, verifierKeyChain) {
-  const initiatorKey = bcoin.keyring.fromPrivate(initiatorKeyChain.getAccountSecret(0, 0));
-  const verifierKey  = bcoin.keyring.fromPrivate(verifierKeyChain.getAccountSecret(0, 0));
+  const initiatorKey = CompoundKey.keyFromSecret(initiatorKeyChain.getAccountSecret(0, 0));
+  const verifierKey  = CompoundKey.keyFromSecret(verifierKeyChain.getAccountSecret(0, 0));
 
   const initiator = new CompoundKey({
-    localPrivateKeyring: initiatorKey
+    localPrivateKey: initiatorKey
   });
 
   const verifier = new CompoundKey({
-    localPrivateKeyring: verifierKey
+    localPrivateKey: verifierKey
   });
 
   await sync(initiator, verifier);
@@ -373,11 +423,13 @@ const bitcoinCashSync = async function (initiatorKeyChain, verifierKeyChain) {
 
   await walletdb.open();
 
-  // The wallet is intended to watch over the full public key
+  const keyring = bcoin.keyring.fromPublic(Buffer.from(initiator.getCompoundPublicKey().encode(true, 'array')));
+
+// The wallet is intended to watch over the full public key
   const wallet = await new WatchingWallet({
     accounts: [{
-      name: initiator.getCompoundKeyAddress('base58'),
-      key: initiator.compoundPublicKeyring
+      name: keyring.getKeyAddress('base58'),
+      key: keyring
     }]
   }).load(walletdb);
 
@@ -427,7 +479,7 @@ const bitcoinCashSync = async function (initiatorKeyChain, verifierKeyChain) {
 
 const bitcoinCashSend = async function (wallet, address, value) {
   const transaction = BitcoinCashTransaction.fromOptions({
-    network: Transaction.Testnet
+    network: BitcoreTransaction.Testnet
   });
 
   await transaction.prepare({
@@ -435,8 +487,6 @@ const bitcoinCashSend = async function (wallet, address, value) {
     address: address,
     value: value
   });
-
-  const total = transaction.totalOutputs();
 
   await sign(transaction, wallet.initiator, wallet.verifier);
 
