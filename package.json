@@ -21,7 +21,7 @@
     "jspaillier": "^0.1.1",
     "request-promise-native": "^1.0.5",
     "tree-model": "^1.0.6",
-    "web3": "^1.0.0-beta.26",
+    "web3": "^1.0.0-beta.30",
     "web3-core-helpers": "latest",
     "web3-utils": "latest"
   }
