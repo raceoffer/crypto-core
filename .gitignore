@@ -1,3 +1,6 @@
 node_modules
 /bcoin.bundle.js
 /index.bundle.js
+/test/
+/.idea/
+/package-lock.json
