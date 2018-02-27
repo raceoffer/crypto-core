@@ -515,13 +515,11 @@ const erc20test = async function () {
     console.log('Balance', wallet.fromUnits(balance));
   });
 
-  const tx = await wallet.createTransaction('0x3183Db00F24EEec63EE5fDCD9117855cb4c05c6a', wallet.toUnits(10));
-
-  const transaction = EthereumTransaction.fromJSON({ tx: tx });
+  const tx = await wallet.createTransaction('0xc48b6CE8A0715C5dD0Ab42e8586B8A3BDa8D5253', wallet.toUnits(10));
 
   const account = wallet.web3.eth.accounts.privateKeyToAccount('0x34b1477db192d090ade76c958e6d674d37361eba7af1c4616a69d374de64e505');
 
-  const signed = await account.signTransaction(transaction.tx);
+  const signed = await account.signTransaction(tx.tx);
 
   await wallet.sendSignedTransaction(signed.rawTransaction);
 
