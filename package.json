@@ -17,6 +17,7 @@
     "elliptic": "^6.4.0",
     "eth-lib": "^0.2.7",
     "hmac-drbg": "^1.0.1",
+    "human-standard-token-abi": "^1.0.2",
     "jsbn": "latest",
     "jspaillier": "^0.1.1",
     "request-promise-native": "^1.0.5",
