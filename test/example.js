@@ -1,5 +1,6 @@
 const fs = require('fs');
 const assert = require('assert');
+const decoder = require('abi-decoder');
 
 const bcoinLib = require('..');
 const ec = require('elliptic').ec('secp256k1');
@@ -516,6 +517,31 @@ const erc20test = async function () {
   });
 
   const tx = await wallet.createTransaction('0xc48b6CE8A0715C5dD0Ab42e8586B8A3BDa8D5253', wallet.toUnits(10));
+
+  decoder.addABI([{
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "name": "success",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  }]);
+
+  const smth = decoder.decodeMethod(tx.tx.data);
 
   const account = wallet.web3.eth.accounts.privateKeyToAccount('0x34b1477db192d090ade76c958e6d674d37361eba7af1c4616a69d374de64e505');
 
