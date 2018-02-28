@@ -13,6 +13,7 @@ BitcoinTransaction = require('./lib/bitcore/bitcointransaction');
 BitcoinCashTransaction = require('./lib/bitcore/bitcoincashtransaction');
 EthereumTransaction = require('./lib/ethereum/ethereumtransaction');
 EthereumWallet = require('./lib/ethereumwallet').set(Web3);
+ERC20Wallet = require('./lib/erc20wallet').set(Web3);
 SchnorrProof = require('./lib/schnorrproof');
 PaillierProof = require('./lib/paillierproof');
 PedersenScheme = require('./lib/pedersenscheme');

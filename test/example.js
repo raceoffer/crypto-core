@@ -1,7 +1,9 @@
 const fs = require('fs');
 const assert = require('assert');
+const decoder = require('abi-decoder');
 
 const bcoinLib = require('..');
+const ec = require('elliptic').ec('secp256k1');
 
 const bcoin = bcoinLib.bcoin;
 
@@ -17,6 +19,7 @@ const BitcoinCashTransaction = bcoinLib.bitcoinCashTransaction;
 const EthereumTransaction = bcoinLib.ethereumTransaction;
 const EthereumWallet = bcoinLib.ethereumWallet;
 const Currency = bcoinLib.currency;
+const ERC20Wallet = bcoinLib.erc20Wallet;
 
 const DDS = bcoinLib.dds;
 
@@ -497,6 +500,59 @@ const bitcoinCashSend = async function (wallet, address, value) {
   await wallet.provider.pushTransaction(raw);
 };
 
+const erc20test = async function () {
+  const key = ec.keyFromPrivate(Buffer.from('34b1477db192d090ade76c958e6d674d37361eba7af1c4616a69d374de64e505', 'hex'));
+
+  const address = Currency.get(Currency.ETH).address(key.getPublic());
+
+  const wallet = await new ERC20Wallet({
+    address: address,
+    contractAddress: '0x1014003937b6fcd21f1a27df897b5888bbb73b9f',
+    network: network
+  }).load();
+
+  console.log('Balance', wallet.fromUnits(await wallet.getBalance()));
+  wallet.on('balance', (balance) => {
+    console.log('Balance', wallet.fromUnits(balance));
+  });
+
+  const tx = await wallet.createTransaction('0xc48b6CE8A0715C5dD0Ab42e8586B8A3BDa8D5253', wallet.toUnits(10));
+
+  decoder.addABI([{
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "name": "success",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  }]);
+
+  const smth = decoder.decodeMethod(tx.tx.data);
+
+  const account = wallet.web3.eth.accounts.privateKeyToAccount('0x34b1477db192d090ade76c958e6d674d37361eba7af1c4616a69d374de64e505');
+
+  const signed = await account.signTransaction(tx.tx);
+
+  await wallet.sendSignedTransaction(signed.rawTransaction);
+
+  console.log('Ok');
+};
+
 (async () => {
-  await compoundTest();
+  await erc20test();
+  //await compoundTest();
 })().catch(e => console.log(e));

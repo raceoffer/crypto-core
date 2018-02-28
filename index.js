@@ -22,5 +22,6 @@ module.exports = {
   pedersenScheme: require('./lib/pedersenscheme'),
   dds: require('./lib/dds').set(web3),
   ethereumWallet: require('./lib/ethereumwallet').set(web3),
+  erc20Wallet: require('./lib/erc20Wallet').set(web3),
   currency: require('./lib/currency/currency').set(bcoin)
 };

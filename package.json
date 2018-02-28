@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "abi-decoder": "^1.0.9",
     "bcoin": "^1.0.0-beta.15",
     "bitcoincashjs": "^0.1.10",
     "bitcore-lib": "^0.15.0",
@@ -17,6 +18,7 @@
     "elliptic": "^6.4.0",
     "eth-lib": "^0.2.7",
     "hmac-drbg": "^1.0.1",
+    "human-standard-token-abi": "^1.0.2",
     "jsbn": "latest",
     "jspaillier": "^0.1.1",
     "request-promise-native": "^1.0.5",
