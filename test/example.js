@@ -177,15 +177,15 @@ const compoundTest = async function () {
   const initiatorKeyChain = KeyChain.fromSeed(initiatorSeed);
   const verifierKeyChain = KeyChain.fromSeed(verifierSeed);
 
-  const ethereum = await ethereumSync(initiatorKeyChain, verifierKeyChain);
+  // const ethereum = await ethereumSync(initiatorKeyChain, verifierKeyChain);
   const bitcoin = await bitcoinSync(initiatorKeyChain, verifierKeyChain);
-  const bitcoinCash = await bitcoinCashSync(initiatorKeyChain, verifierKeyChain);
+  // const bitcoinCash = await bitcoinCashSync(initiatorKeyChain, verifierKeyChain);
 
   await new Promise(res => setTimeout(res, 5000));
 
-  await ethereumSend(ethereum, ethereum.wallet.address, 1000);
+  // await ethereumSend(ethereum, ethereum.wallet.address, 1000);
   await bitcoinSend(bitcoin, bitcoin.wallet.getAddress('base58'), 1000);
-  await bitcoinCashSend(bitcoinCash, bitcoinCash.wallet.getAddress('base58'), 1000);
+  // await bitcoinCashSend(bitcoinCash, bitcoinCash.wallet.getAddress('base58'), 1000);
 
   console.log("OK");
 };
@@ -394,6 +394,8 @@ const bitcoinSend = async function (wallet, address, value) {
     value: value
   });
 
+  console.log(transaction.totalOutputs());
+
   await sign(transaction, wallet.initiator, wallet.verifier);
 
   assert(transaction.tx.verify());
@@ -553,6 +555,5 @@ const erc20test = async function () {
 };
 
 (async () => {
-  await erc20test();
-  //await compoundTest();
+  await compoundTest();
 })().catch(e => console.log(e));
