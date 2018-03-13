@@ -17,7 +17,7 @@ module.exports = {
   bitcoinCashTransaction: require('./lib/bitcore/bitcoincashtransaction'),
   bitcoinTransaction: require('./lib/bitcore/bitcointransaction'),
   ethereumTransaction: require('./lib/ethereum/ethereumtransaction'),
-  schnorrProof: require('./lib/schnorrproof').set(bcoin),
+  schnorrProof: require('./lib/schnorrproof'),
   paillierProof: require('./lib/paillierproof'),
   pedersenScheme: require('./lib/pedersenscheme'),
   dds: require('./lib/dds').set(web3),
