@@ -7,7 +7,6 @@ BlockchainInfoProvider = require('./lib/blockchaininfoprovider');
 InsightProvider = require('./lib/insightprovider');
 Utils = require('./lib/utils');
 CompoundKey = require('./lib/compoundkey');
-Currency = require('./lib/currency/currency');
 BitcoreTransaction = require('./lib/bitcore/bitcoretransaction');
 BitcoinTransaction = require('./lib/bitcore/bitcointransaction');
 BitcoinCashTransaction = require('./lib/bitcore/bitcoincashtransaction');

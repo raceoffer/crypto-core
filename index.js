@@ -6,7 +6,7 @@ module.exports = {
   bcoin: bcoin,
   cashjs: bitcoincashjs,
   web3: web3,
-  keyChain: require('./lib/keychain').set(bcoin),
+  keyChain: require('./lib/keychain'),
   watchingWallet: require('./lib/watchingwallet').set(bcoin),
   blockCypherProvider: require('./lib/blockcypherprovider'),
   insightProvider: require('./lib/insightprovider').set(bcoin),
@@ -22,6 +22,5 @@ module.exports = {
   pedersenScheme: require('./lib/pedersenscheme'),
   dds: require('./lib/dds').set(web3),
   ethereumWallet: require('./lib/ethereumwallet').set(web3),
-  erc20Wallet: require('./lib/erc20Wallet').set(web3),
-  currency: require('./lib/currency/currency').set(bcoin)
+  erc20Wallet: require('./lib/erc20Wallet').set(web3)
 };
