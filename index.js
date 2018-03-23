@@ -2,6 +2,7 @@ module.exports = {
   KeyChain: require('./lib/keychain'),
   WatchingWallet: require('./lib/watchingwallet'),
   BlockCypherProvider: require('./lib/blockcypherprovider'),
+  InsightProvider: require('./lib/insightprovider'),
   BlockchainInfoProvider: require('./lib/blockchaininfoprovider'),
   Utils: require('./lib/utils'),
   CompoundKey: require('./lib/compoundkey'),
