@@ -15,5 +15,5 @@ module.exports = {
   PedersenScheme: require('./lib/pedersenscheme'),
   DDS: require('./lib/dds'),
   EthereumWallet: require('./lib/ethereumwallet'),
-  Erc20Wallet: require('./lib/erc20Wallet')
+  ERC20Wallet: require('./lib/erc20Wallet')
 };
