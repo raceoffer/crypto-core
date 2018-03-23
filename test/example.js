@@ -1,8 +1,6 @@
 const fs = require('fs');
 const assert = require('assert');
 
-const bcoin = require('bcoin');
-
 const CryptoCore = require('..');
 
 const WatchingWallet = CryptoCore.WatchingWallet;
@@ -314,13 +312,10 @@ const bitcoinSync = async function (initiatorKeyChain, verifierKeyChain) {
 
   // Start: configuring a wallet
 
-  const keyring = bcoin.keyring.fromPublic(Buffer.from(initiator.getCompoundPublicKey().encode(true, 'array')), network);
-
-// The wallet is intended to watch over the full public key
+  // The wallet is intended to watch over the full public key
   const wallet = await new WatchingWallet({
     accounts: [{
-      name: keyring.getKeyAddress('base58'),
-      key: keyring
+      key: initiator.getCompoundPublicKey()
     }],
     network: network
   }).load();
@@ -332,14 +327,14 @@ const bitcoinSync = async function (initiatorKeyChain, verifierKeyChain) {
   });
 
   wallet.on('balance', (balance) => {
-    console.log('Balance:', bcoin.amount.btc(balance.confirmed), '(', bcoin.amount.btc(balance.unconfirmed), ')');
+    console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
   });
 
   // End: configuring a wallet
 
   // Displaying an initial (loaded from db) balance
   const balance = await wallet.getBalance();
-  console.log('Balance:', bcoin.amount.btc(balance.confirmed), '(', bcoin.amount.btc(balance.unconfirmed), ')');
+  console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
 
   const provider = new BlockchainInfoProvider({
     network: network
@@ -407,13 +402,10 @@ const bitcoinCashSync = async function (initiatorKeyChain, verifierKeyChain) {
 
   // Start: configuring a wallet
 
-  const keyring = bcoin.keyring.fromPublic(Buffer.from(initiator.getCompoundPublicKey().encode(true, 'array')), network);
-
-// The wallet is intended to watch over the full public key
+  // The wallet is intended to watch over the full public key
   const wallet = await new WatchingWallet({
     accounts: [{
-      name: keyring.getKeyAddress('base58'),
-      key: keyring
+      key: initiator.getCompoundPublicKey()
     }],
     network: network
   }).load();
@@ -425,14 +417,14 @@ const bitcoinCashSync = async function (initiatorKeyChain, verifierKeyChain) {
   });
 
   wallet.on('balance', (balance) => {
-    console.log('Balance:', bcoin.amount.btc(balance.confirmed), '(', bcoin.amount.btc(balance.unconfirmed), ')');
+    console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
   });
 
   // End: configuring a wallet
 
   // Displaying an initial (loaded from db) balance
   const balance = await wallet.getBalance();
-  console.log('Balance:', bcoin.amount.btc(balance.confirmed), '(', bcoin.amount.btc(balance.unconfirmed), ')');
+  console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
 
   const provider = new InsightProvider({
     network: network
