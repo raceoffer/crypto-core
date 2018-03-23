@@ -1,27 +1,20 @@
 const fs = require('fs');
 const assert = require('assert');
-const decoder = require('abi-decoder');
 
-const bcoinLib = require('..');
-const ec = require('elliptic').ec('secp256k1');
+const CryptoCore = require('..');
 
-const bcoin = bcoinLib.bcoin;
-
-const WatchingWallet = bcoinLib.watchingWallet;
-const InsightProvider = bcoinLib.insightProvider;
-const BlockchainInfoProvider = bcoinLib.blockchainInfoProvider;
-const CompoundKey = bcoinLib.compoundKey;
-const KeyChain = bcoinLib.keyChain;
-const Utils = bcoinLib.utils;
-const BitcoreTransaction = bcoinLib.bitcoreTransaction;
-const BitcoinTransaction = bcoinLib.bitcoinTransaction;
-const BitcoinCashTransaction = bcoinLib.bitcoinCashTransaction;
-const EthereumTransaction = bcoinLib.ethereumTransaction;
-const EthereumWallet = bcoinLib.ethereumWallet;
-const Currency = bcoinLib.currency;
-const ERC20Wallet = bcoinLib.erc20Wallet;
-
-const DDS = bcoinLib.dds;
+const WatchingWallet = CryptoCore.WatchingWallet;
+const InsightProvider = CryptoCore.InsightProvider;
+const BlockchainInfoProvider = CryptoCore.BlockchainInfoProvider;
+const CompoundKey = CryptoCore.CompoundKey;
+const KeyChain = CryptoCore.KeyChain;
+const Utils = CryptoCore.Utils;
+const BitcoreTransaction = CryptoCore.BitcoreTransaction;
+const BitcoinTransaction = CryptoCore.BitcoinTransaction;
+const BitcoinCashTransaction = CryptoCore.BitcoinCashTransaction;
+const EthereumTransaction = CryptoCore.EthereumTransaction;
+const EthereumWallet = CryptoCore.EthereumWallet;
+const DDS = CryptoCore.DDS;
 
 const network = 'testnet';
 
@@ -83,8 +76,6 @@ const matchPredefinedRoute = function(forest, route) {
 };
 
 const compoundTest = async function () {
-  bcoin.set(network);
-
   const dds = new DDS({
     infuraToken: 'DKG18gIcGSFXCxcpvkBm',
     network: 'testnet'
@@ -177,15 +168,15 @@ const compoundTest = async function () {
   const initiatorKeyChain = KeyChain.fromSeed(initiatorSeed);
   const verifierKeyChain = KeyChain.fromSeed(verifierSeed);
 
-  // const ethereum = await ethereumSync(initiatorKeyChain, verifierKeyChain);
+  const ethereum = await ethereumSync(initiatorKeyChain, verifierKeyChain);
   const bitcoin = await bitcoinSync(initiatorKeyChain, verifierKeyChain);
-  // const bitcoinCash = await bitcoinCashSync(initiatorKeyChain, verifierKeyChain);
+  const bitcoinCash = await bitcoinCashSync(initiatorKeyChain, verifierKeyChain);
 
   await new Promise(res => setTimeout(res, 5000));
 
-  // await ethereumSend(ethereum, ethereum.wallet.address, 1000);
+  await ethereumSend(ethereum, ethereum.wallet.address, 1000);
   await bitcoinSend(bitcoin, bitcoin.wallet.getAddress('base58'), 1000);
-  // await bitcoinCashSend(bitcoinCash, bitcoinCash.wallet.getAddress('base58'), 1000);
+  await bitcoinCashSend(bitcoinCash, bitcoinCash.wallet.getAddress('base58'), 1000);
 
   console.log("OK");
 };
@@ -267,13 +258,12 @@ const ethereumSync = async function (initiatorKeyChain, verifierKeyChain) {
 
   await sync(initiator, verifier);
 
-  const currency = Currency.get(Currency.ETH);
-
   const wallet = await new EthereumWallet({
-    address: currency.address(initiator.getCompoundPublicKey()),
+    address: EthereumWallet.address(initiator.getCompoundPublicKey()),
     network: network
   }).load();
 
+  console.log(wallet.address);
   console.log('Balance', wallet.fromWei(await wallet.getBalance(), 'ether'));
   wallet.on('balance', (balance) => {
     console.log('Balance', wallet.fromWei(balance, 'ether'));
@@ -322,22 +312,13 @@ const bitcoinSync = async function (initiatorKeyChain, verifierKeyChain) {
 
   // Start: configuring a wallet
 
-  const walletdb = new bcoin.walletdb({
-    db: 'memory',
-    location: network
-  });
-
-  await walletdb.open();
-
-  const keyring = bcoin.keyring.fromPublic(Buffer.from(initiator.getCompoundPublicKey().encode(true, 'array')));
-
-// The wallet is intended to watch over the full public key
+  // The wallet is intended to watch over the full public key
   const wallet = await new WatchingWallet({
     accounts: [{
-      name: keyring.getKeyAddress('base58'),
-      key: keyring
-    }]
-  }).load(walletdb);
+      key: initiator.getCompoundPublicKey()
+    }],
+    network: network
+  }).load();
 
   console.log(wallet.getAddress('base58'));
 
@@ -346,14 +327,14 @@ const bitcoinSync = async function (initiatorKeyChain, verifierKeyChain) {
   });
 
   wallet.on('balance', (balance) => {
-    console.log('Balance:', bcoin.amount.btc(balance.confirmed), '(', bcoin.amount.btc(balance.unconfirmed), ')');
+    console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
   });
 
   // End: configuring a wallet
 
   // Displaying an initial (loaded from db) balance
   const balance = await wallet.getBalance();
-  console.log('Balance:', bcoin.amount.btc(balance.confirmed), '(', bcoin.amount.btc(balance.unconfirmed), ')');
+  console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
 
   const provider = new BlockchainInfoProvider({
     network: network
@@ -421,22 +402,13 @@ const bitcoinCashSync = async function (initiatorKeyChain, verifierKeyChain) {
 
   // Start: configuring a wallet
 
-  const walletdb = new bcoin.walletdb({
-    db: 'memory',
-    location: network
-  });
-
-  await walletdb.open();
-
-  const keyring = bcoin.keyring.fromPublic(Buffer.from(initiator.getCompoundPublicKey().encode(true, 'array')));
-
-// The wallet is intended to watch over the full public key
+  // The wallet is intended to watch over the full public key
   const wallet = await new WatchingWallet({
     accounts: [{
-      name: keyring.getKeyAddress('base58'),
-      key: keyring
-    }]
-  }).load(walletdb);
+      key: initiator.getCompoundPublicKey()
+    }],
+    network: network
+  }).load();
 
   console.log(wallet.getAddress('base58'));
 
@@ -445,14 +417,14 @@ const bitcoinCashSync = async function (initiatorKeyChain, verifierKeyChain) {
   });
 
   wallet.on('balance', (balance) => {
-    console.log('Balance:', bcoin.amount.btc(balance.confirmed), '(', bcoin.amount.btc(balance.unconfirmed), ')');
+    console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
   });
 
   // End: configuring a wallet
 
   // Displaying an initial (loaded from db) balance
   const balance = await wallet.getBalance();
-  console.log('Balance:', bcoin.amount.btc(balance.confirmed), '(', bcoin.amount.btc(balance.unconfirmed), ')');
+  console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
 
   const provider = new InsightProvider({
     network: network
@@ -500,58 +472,6 @@ const bitcoinCashSend = async function (wallet, address, value) {
   const raw = transaction.toRaw();
 
   await wallet.provider.pushTransaction(raw);
-};
-
-const erc20test = async function () {
-  const key = ec.keyFromPrivate(Buffer.from('34b1477db192d090ade76c958e6d674d37361eba7af1c4616a69d374de64e505', 'hex'));
-
-  const address = Currency.get(Currency.ETH).address(key.getPublic());
-
-  const wallet = await new ERC20Wallet({
-    address: address,
-    contractAddress: '0x1014003937b6fcd21f1a27df897b5888bbb73b9f',
-    network: network
-  }).load();
-
-  console.log('Balance', wallet.fromUnits(await wallet.getBalance()));
-  wallet.on('balance', (balance) => {
-    console.log('Balance', wallet.fromUnits(balance));
-  });
-
-  const tx = await wallet.createTransaction('0xc48b6CE8A0715C5dD0Ab42e8586B8A3BDa8D5253', wallet.toUnits(10));
-
-  decoder.addABI([{
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "name": "_value",
-        "type": "uint256"
-      }
-    ],
-    "name": "transfer",
-    "outputs": [
-      {
-        "name": "success",
-        "type": "bool"
-      }
-    ],
-    "payable": false,
-    "type": "function"
-  }]);
-
-  const smth = decoder.decodeMethod(tx.tx.data);
-
-  const account = wallet.web3.eth.accounts.privateKeyToAccount('0x34b1477db192d090ade76c958e6d674d37361eba7af1c4616a69d374de64e505');
-
-  const signed = await account.signTransaction(tx.tx);
-
-  await wallet.sendSignedTransaction(signed.rawTransaction);
-
-  console.log('Ok');
 };
 
 (async () => {

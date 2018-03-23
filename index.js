@@ -1,26 +1,19 @@
-const bcoin = require('bcoin');
-const web3 = require('web3');
-const bitcoincashjs = require('bitcoincashjs');
-
 module.exports = {
-  bcoin: bcoin,
-  cashjs: bitcoincashjs,
-  web3: web3,
-  keyChain: require('./lib/keychain'),
-  watchingWallet: require('./lib/watchingwallet').set(bcoin),
-  blockCypherProvider: require('./lib/blockcypherprovider'),
-  insightProvider: require('./lib/insightprovider').set(bcoin),
-  blockchainInfoProvider: require('./lib/blockchaininfoprovider'),
-  utils: require('./lib/utils'),
-  compoundKey: require('./lib/compoundkey'),
-  bitcoreTransaction: require('./lib/bitcore/bitcoretransaction'),
-  bitcoinCashTransaction: require('./lib/bitcore/bitcoincashtransaction'),
-  bitcoinTransaction: require('./lib/bitcore/bitcointransaction'),
-  ethereumTransaction: require('./lib/ethereum/ethereumtransaction'),
-  schnorrProof: require('./lib/schnorrproof'),
-  paillierProof: require('./lib/paillierproof'),
-  pedersenScheme: require('./lib/pedersenscheme'),
-  dds: require('./lib/dds').set(web3),
-  ethereumWallet: require('./lib/ethereumwallet').set(web3),
-  erc20Wallet: require('./lib/erc20Wallet').set(web3)
+  KeyChain: require('./lib/keychain'),
+  WatchingWallet: require('./lib/watchingwallet'),
+  BlockCypherProvider: require('./lib/blockcypherprovider'),
+  InsightProvider: require('./lib/insightprovider'),
+  BlockchainInfoProvider: require('./lib/blockchaininfoprovider'),
+  Utils: require('./lib/utils'),
+  CompoundKey: require('./lib/compoundkey'),
+  BitcoreTransaction: require('./lib/bitcore/bitcoretransaction'),
+  BitcoinCashTransaction: require('./lib/bitcore/bitcoincashtransaction'),
+  BitcoinTransaction: require('./lib/bitcore/bitcointransaction'),
+  EthereumTransaction: require('./lib/ethereum/ethereumtransaction'),
+  SchnorrProof: require('./lib/schnorrproof'),
+  PaillierProof: require('./lib/paillierproof'),
+  PedersenScheme: require('./lib/pedersenscheme'),
+  DDS: require('./lib/dds'),
+  EthereumWallet: require('./lib/ethereumwallet'),
+  ERC20Wallet: require('./lib/erc20Wallet')
 };

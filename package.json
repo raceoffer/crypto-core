@@ -1,10 +1,9 @@
 {
-  "name": "bcoinlib",
+  "name": "crypto-core",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "webpack": "webpack --config webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -21,6 +20,7 @@
     "human-standard-token-abi": "^1.0.2",
     "jsbn": "latest",
     "jspaillier": "^0.1.1",
+    "level-js": "^2.2.4",
     "request-promise-native": "^1.0.5",
     "tree-model": "^1.0.6",
     "web3": "^1.0.0-beta.30",
