@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "abi-decoder": "^1.0.9",
     "bcoin": "^1.0.0-beta.15",
     "bitcoincashjs": "^0.1.10",
     "bitcore-lib": "^0.15.0",
@@ -24,7 +25,6 @@
     "tree-model": "^1.0.6",
     "web3": "^1.0.0-beta.30",
     "web3-core-helpers": "latest",
-    "web3-eth-abi": "^1.0.0-beta.33",
     "web3-utils": "latest"
   }
 }
