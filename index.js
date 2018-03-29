@@ -17,5 +17,6 @@ module.exports = {
   DDS: require('./lib/dds'),
   EthereumWallet: require('./lib/ethereumwallet'),
   ERC20Wallet: require('./lib/erc20Wallet'),
+  Signer: require('./lib/signer'),
   Marshal: require('./lib/marshal')
 };
