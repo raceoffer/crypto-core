@@ -174,6 +174,9 @@ const compoundTest = async function () {
   const litecoin = await litecoinSync(initiatorKeyChain, verifierKeyChain);
 
   await new Promise(res => setTimeout(res, 5000));
+  console.log('Litecoin adress?', litecoin.wallet.getAddress('base58'));
+
+  await litecoinSend(litecoin, litecoin.wallet.getAddress('base58'), 1000);
 
   console.log("OK");
 };
@@ -554,9 +557,9 @@ const litecoinSend = async function (wallet, address, value) {
         value: value
     });
 
-    console.log(transaction.totalOutputs());
-
     await sign(transaction, wallet.initiator, wallet.verifier);
+
+    console.log("Before push");
 
     assert(transaction.tx.verify());
 
