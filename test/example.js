@@ -6,9 +6,12 @@ const CryptoCore = require('..');
 const WatchingWallet = CryptoCore.WatchingWallet;
 const InsightProvider = CryptoCore.InsightProvider;
 const BlockchainInfoProvider = CryptoCore.BlockchainInfoProvider;
+const InsightProviderLTC = CryptoCore.InsightProviderLTC;
 const CompoundKey = CryptoCore.CompoundKey;
 const KeyChain = CryptoCore.KeyChain;
 const Utils = CryptoCore.Utils;
+const LitecoreTransaction = CryptoCore.LitecoreTransaction;
+const LitecoinTransaction = CryptoCore.LitecoinTransaction;
 const BitcoreTransaction = CryptoCore.BitcoreTransaction;
 const BitcoinTransaction = CryptoCore.BitcoinTransaction;
 const BitcoinCashTransaction = CryptoCore.BitcoinCashTransaction;
@@ -168,15 +171,9 @@ const compoundTest = async function () {
   const initiatorKeyChain = KeyChain.fromSeed(initiatorSeed);
   const verifierKeyChain = KeyChain.fromSeed(verifierSeed);
 
-  const ethereum = await ethereumSync(initiatorKeyChain, verifierKeyChain);
-  const bitcoin = await bitcoinSync(initiatorKeyChain, verifierKeyChain);
-  const bitcoinCash = await bitcoinCashSync(initiatorKeyChain, verifierKeyChain);
+  const litecoin = await litecoinSync(initiatorKeyChain, verifierKeyChain);
 
   await new Promise(res => setTimeout(res, 5000));
-
-  await ethereumSend(ethereum, ethereum.wallet.address, 1000);
-  await bitcoinSend(bitcoin, bitcoin.wallet.getAddress('base58'), 1000);
-  await bitcoinCashSend(bitcoinCash, bitcoinCash.wallet.getAddress('base58'), 1000);
 
   console.log("OK");
 };
@@ -266,7 +263,7 @@ const ethereumSync = async function (initiatorKeyChain, verifierKeyChain) {
   console.log(wallet.address);
   console.log('Balance', wallet.fromWei(await wallet.getBalance(), 'ether'));
   wallet.on('balance', (balance) => {
-    console.log('Balance', wallet.fromWei(balance, 'ether'));
+    console.log('Balance', wallet.fromWei(balance.toString(), 'ether'));
   });
 
   return {
@@ -477,3 +474,93 @@ const bitcoinCashSend = async function (wallet, address, value) {
 (async () => {
   await compoundTest();
 })().catch(e => console.log(e));
+
+const litecoinSync = async function (initiatorKeyChain, verifierKeyChain) {
+    const initiatorKey = CompoundKey.keyFromSecret(initiatorKeyChain.getAccountSecret(0, 0));
+    const verifierKey  = CompoundKey.keyFromSecret(verifierKeyChain.getAccountSecret(0, 0));
+
+    const initiator = new CompoundKey({
+        localPrivateKey: initiatorKey
+    });
+
+    const verifier = new CompoundKey({
+        localPrivateKey: verifierKey
+    });
+
+    await sync(initiator, verifier);
+
+    // Start: configuring a wallet
+
+    // The wallet is intended to watch over the full public key
+    const wallet = await new WatchingWallet({
+        accounts: [{
+            key: initiator.getCompoundPublicKey()
+        }],
+        network: network
+    }).load();
+
+    console.log(wallet.getAddress('base58'));
+
+    wallet.on('transaction',(tx) => {
+        console.log(JSON.stringify(tx.toJSON()));
+    });
+
+    wallet.on('balance', (balance) => {
+        console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
+    });
+
+    // End: configuring a wallet
+
+    // Displaying an initial (loaded from db) balance
+    const balance = await wallet.getBalance();
+    console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
+
+    const provider = new InsightProviderLTC({
+        network: network
+    });
+
+    provider.on('transaction', async (hash, meta) => {
+        let hex = await wallet.getRawTransaction(hash);
+        if (!hex) {
+            hex = await provider.pullRawTransaction(hash);
+        }
+        await wallet.addRawTransaction(hex, meta);
+    });
+
+    // Initiate update routine
+    await provider.pullTransactions(wallet.getAddress('base58'));
+    setInterval(async () => {
+        await provider.pullTransactions(wallet.getAddress('base58'));
+    },10000);
+
+    // End: configuring a provider
+
+    return {
+        wallet,
+        provider,
+        initiator,
+        verifier
+    };
+};
+
+const litecoinSend = async function (wallet, address, value) {
+    const transaction = LitecoinTransaction.fromOptions({
+        network: LitecoreTransaction.Testnet
+    });
+
+    await transaction.prepare({
+        wallet: wallet.wallet,
+        address: address,
+        value: value
+    });
+
+    console.log(transaction.totalOutputs());
+
+    await sign(transaction, wallet.initiator, wallet.verifier);
+
+    assert(transaction.tx.verify());
+
+    const raw = transaction.toRaw();
+
+    await wallet.provider.pushTransaction(raw);
+};
