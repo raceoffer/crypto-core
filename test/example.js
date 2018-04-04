@@ -10,7 +10,6 @@ const InsightProviderLTC = CryptoCore.InsightProviderLTC;
 const CompoundKey = CryptoCore.CompoundKey;
 const KeyChain = CryptoCore.KeyChain;
 const Utils = CryptoCore.Utils;
-const LitecoreTransaction = CryptoCore.LitecoreTransaction;
 const LitecoinTransaction = CryptoCore.LitecoinTransaction;
 const BitcoreTransaction = CryptoCore.BitcoreTransaction;
 const BitcoinTransaction = CryptoCore.BitcoinTransaction;
@@ -548,7 +547,7 @@ const litecoinSync = async function (initiatorKeyChain, verifierKeyChain) {
 
 const litecoinSend = async function (wallet, address, value) {
     const transaction = LitecoinTransaction.fromOptions({
-        network: LitecoreTransaction.Testnet
+        network: BitcoreTransaction.Testnet
     });
 
     await transaction.prepare({
