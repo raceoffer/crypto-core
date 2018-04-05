@@ -1,9 +1,9 @@
 module.exports = {
   KeyChain: require('./lib/keychain'),
-  WatchingWallet: require('./lib/watchingwallet'),
-  BlockCypherProvider: require('./lib/blockcypherprovider'),
-  InsightProvider: require('./lib/insightprovider'),
-  BlockchainInfoProvider: require('./lib/blockchaininfoprovider'),
+  BitcoreWallet: require('./lib/bitcore/bitcorewallet'),
+  BlockCypherProvider: require('./lib/providers/blockcypherprovider'),
+  InsightProvider: require('./lib/providers/insightprovider'),
+  BlockchainInfoProvider: require('./lib/providers/blockchaininfoprovider'),
   Utils: require('./lib/utils'),
   CompoundKey: require('./lib/compoundkey'),
   BitcoreTransaction: require('./lib/bitcore/bitcoretransaction'),
@@ -11,9 +11,12 @@ module.exports = {
   BitcoinTransaction: require('./lib/bitcore/bitcointransaction'),
   EthereumTransaction: require('./lib/ethereum/ethereumtransaction'),
   SchnorrProof: require('./lib/schnorrproof'),
-  PaillierProof: require('./lib/paillierproof'),
+  PaillierProver: require('./lib/paillierprover'),
+  PaillierVerifier: require('./lib/paillierverifier'),
   PedersenScheme: require('./lib/pedersenscheme'),
   DDS: require('./lib/dds'),
-  EthereumWallet: require('./lib/ethereumwallet'),
-  ERC20Wallet: require('./lib/erc20Wallet')
+  EthereumWallet: require('./lib/ethereum/ethereumwallet'),
+  ERC20Wallet: require('./lib/ethereum/erc20wallet'),
+  Signer: require('./lib/signer'),
+  Marshal: require('./lib/marshal')
 };
