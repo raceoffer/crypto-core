@@ -8,6 +8,7 @@ module.exports = {
   CompoundKey: require('./lib/compoundkey'),
   BitcoreTransaction: require('./lib/bitcore/bitcoretransaction'),
   BitcoinCashTransaction: require('./lib/bitcore/bitcoincashtransaction'),
+  LitecoinTransaction: require('./lib/bitcore/litecointransaction'),
   BitcoinTransaction: require('./lib/bitcore/bitcointransaction'),
   EthereumTransaction: require('./lib/ethereum/ethereumtransaction'),
   SchnorrProof: require('./lib/schnorrproof'),
