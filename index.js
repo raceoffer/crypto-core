@@ -3,6 +3,8 @@ module.exports = {
   BitcoreWallet: require('./lib/bitcore/bitcorewallet'),
   BlockCypherProvider: require('./lib/providers/blockcypherprovider'),
   InsightProvider: require('./lib/providers/insightprovider'),
+  BCHInsightProvider: require('./lib/providers/bchinsightprovider'),
+  LTCInsightProvider: require('./lib/providers/ltcinsightprovider'),
   BlockchainInfoProvider: require('./lib/providers/blockchaininfoprovider'),
   Utils: require('./lib/utils'),
   CompoundKey: require('./lib/compoundkey'),

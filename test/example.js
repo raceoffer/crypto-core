@@ -4,7 +4,8 @@ const assert = require('assert');
 const CryptoCore = require('..');
 
 const WatchingWallet = CryptoCore.BitcoreWallet;
-const InsightProvider = CryptoCore.InsightProvider;
+const BCHInsightProvider = CryptoCore.BCHInsightProvider;
+const LTCInsightProvider = CryptoCore.LTCInsightProvider;
 const BlockchainInfoProvider = CryptoCore.BlockchainInfoProvider;
 const CompoundKey = CryptoCore.CompoundKey;
 const KeyChain = CryptoCore.KeyChain;
@@ -424,8 +425,8 @@ const bitcoinCashSync = async function (initiatorKeyChain, verifierKeyChain) {
   const balance = await wallet.getBalance();
   console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
 
-  const provider = InsightProvider.fromOptions({
-    endpoint: network === 'testnet' ? 'https://tbcc.blockdozer.com/insight-api' : 'https://bcc.blockdozer.com/insight-api'
+  const provider = BCHInsightProvider.fromOptions({
+    network: network
   });
 
   provider.on('transaction', async (hash, meta) => {
@@ -516,8 +517,8 @@ const litecoinSync = async function (initiatorKeyChain, verifierKeyChain) {
   const balance = await wallet.getBalance();
   console.log('Balance:', WatchingWallet.fromInternal(balance.confirmed), '(', WatchingWallet.fromInternal(balance.unconfirmed), ')');
 
-  const provider = InsightProvider.fromOptions({
-    endpoint: network === 'testnet' ? 'https://testnet.litecore.io/api' : 'https://insight.litecore.io/api'
+  const provider = LTCInsightProvider.fromOptions({
+    network: network
   });
 
   provider.on('transaction', async (hash, meta) => {
