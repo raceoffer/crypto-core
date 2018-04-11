@@ -7,6 +7,12 @@ const BitcoinWallet = CryptoCore.BitcoinWallet;
 const BitcoinCashWallet = CryptoCore.BitcoinCashWallet;
 const LitecoinWallet = CryptoCore.LitecoinWallet;
 const EthereumWallet = CryptoCore.EthereumWallet;
+
+const BitcoinTransaction = CryptoCore.BitcoinTransaction;
+const BitcoinCashTransaction = CryptoCore.BitcoinCashTransaction;
+const LitecoinTransaction = CryptoCore.LitecoinTransaction;
+const EthereumTransaction = CryptoCore.EthereumTransaction;
+
 const KeyChain = CryptoCore.KeyChain;
 const CompoundKey = CryptoCore.CompoundKey;
 const Utils = CryptoCore.Utils;
@@ -171,10 +177,10 @@ const compoundTest = async function () {
   const litecoin = await walletSync(LitecoinWallet, initiatorKeyChain, verifierKeyChain, paillierKeys);
   const ethereum = await walletSync(EthereumWallet, initiatorKeyChain, verifierKeyChain, paillierKeys);
 
-  await send(bitcoin, bitcoin.wallet.address, 1000);
-  await send(bitcoinCash, bitcoinCash.wallet.address, 1000);
-  await send(litecoin, litecoin.wallet.address, 1000);
-  await send(ethereum, ethereum.wallet.address, 1000);
+  await send(BitcoinTransaction, bitcoin, bitcoin.wallet.address, 1000);
+  await send(BitcoinCashTransaction, bitcoinCash, bitcoinCash.wallet.address, 1000);
+  await send(LitecoinTransaction, litecoin, litecoin.wallet.address, 1000);
+  await send(EthereumTransaction, ethereum, ethereum.wallet.address, 1000);
 
   console.log("OK");
 };
@@ -214,9 +220,9 @@ const sync = async function (initiator, verifier) {
   //!--- End sharing
 };
 
-const sign = async function (wallet, transaction, initiator, verifier) {
+const sign = async function (Transaction, transaction, initiator, verifier) {
   const itransaction = transaction;
-  const vtransaction = wallet.transactionFromJSON(transaction.toJSON());
+  const vtransaction = Transaction.fromJSON(transaction.toJSON());
 
   const imapping = itransaction.mapInputs(initiator);
   const ihashes = itransaction.getHashes(imapping);
@@ -278,20 +284,22 @@ const walletSync = async function (Wallet, initiatorKeyChain, verifierKeyChain, 
   };
 };
 
-const send = async function (wallet, address, value) {
-  const transaction = await wallet.wallet.createTransaction(address, value);
+const send = async function (Transaction, wallet, address, value) {
+  const transaction = await wallet.wallet.prepareTransaction(new Transaction(), address, value);
 
   console.log(transaction.totalOutputs());
 
-  await sign(wallet.wallet, transaction, wallet.initiator, wallet.verifier);
+  await sign(Transaction, transaction, wallet.initiator, wallet.verifier);
 
   assert(transaction.verify());
 
-  const raw = transaction.toRaw();
-
-  await wallet.wallet.sendSignedTransaction(raw);
+  await wallet.wallet.sendSignedTransaction(transaction.toRaw());
 };
 
 (async () => {
-  await compoundTest();
+  try {
+    await compoundTest();
+  } catch (e) {
+    console.log(e);
+  }
 })();
