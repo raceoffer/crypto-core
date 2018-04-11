@@ -1,25 +1,31 @@
 module.exports = {
-  KeyChain: require('./lib/keychain'),
-  BitcoreWallet: require('./lib/bitcore/bitcorewallet'),
-  BlockCypherProvider: require('./lib/providers/blockcypherprovider'),
-  InsightProvider: require('./lib/providers/insightprovider'),
-  BCHInsightProvider: require('./lib/providers/bchinsightprovider'),
-  LTCInsightProvider: require('./lib/providers/ltcinsightprovider'),
-  BlockchainInfoProvider: require('./lib/providers/blockchaininfoprovider'),
+  KeyChain: require('./lib/primitives/keychain'),
+
+  BitcoinWallet: require('./lib/wallet/bitcore/bitcoinwallet'),
+  BitcoinCashWallet: require('./lib/wallet/bitcore/bitcoincashwallet'),
+  LitecoinWallet: require('./lib/wallet/bitcore/litecoinwallet'),
+  EthereumWallet: require('./lib/wallet/ethereum/ethereumwallet'),
+  ERC20Wallet: require('./lib/wallet/ethereum/erc20wallet'),
+
+  BlockCypherProvider: require('./lib/provider/blockcypherprovider'),
+  InsightProvider: require('./lib/provider/insightprovider'),
+  BlockchainInfoProvider: require('./lib/provider/blockchaininfoprovider'),
+
+  CompoundKey: require('./lib/primitives/compoundkey'),
+
+  SchnorrProof: require('./lib/primitives/schnorrproof'),
+  PaillierProver: require('./lib/primitives/paillierprover'),
+  PaillierVerifier: require('./lib/primitives/paillierverifier'),
+  PedersenScheme: require('./lib/primitives/pedersenscheme'),
+  Signer: require('./lib/primitives/signer'),
+
+  BitcoinTransaction: require('./lib/transaction/bitcore/bitcointransaction'),
+  BitcoinCashTransaction: require('./lib/transaction/bitcore/bitcoincashtransaction'),
+  LitecoinTransaction: require('./lib/transaction/bitcore/litecointransaction'),
+  EthereumTransaction: require('./lib/transaction/ethereum/ethereumtransaction'),
+
+  DDS: require('./lib/primitives/dds'),
+
   Utils: require('./lib/utils'),
-  CompoundKey: require('./lib/compoundkey'),
-  BitcoreTransaction: require('./lib/bitcore/bitcoretransaction'),
-  BitcoinCashTransaction: require('./lib/bitcore/bitcoincashtransaction'),
-  LitecoinTransaction: require('./lib/bitcore/litecointransaction'),
-  BitcoinTransaction: require('./lib/bitcore/bitcointransaction'),
-  EthereumTransaction: require('./lib/ethereum/ethereumtransaction'),
-  SchnorrProof: require('./lib/schnorrproof'),
-  PaillierProver: require('./lib/paillierprover'),
-  PaillierVerifier: require('./lib/paillierverifier'),
-  PedersenScheme: require('./lib/pedersenscheme'),
-  DDS: require('./lib/dds'),
-  EthereumWallet: require('./lib/ethereum/ethereumwallet'),
-  ERC20Wallet: require('./lib/ethereum/erc20wallet'),
-  Signer: require('./lib/signer'),
   Marshal: require('./lib/marshal')
 };
