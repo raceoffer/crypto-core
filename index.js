@@ -27,5 +27,6 @@ module.exports = {
   DDS: require('./lib/primitives/dds'),
 
   Utils: require('./lib/utils'),
-  Marshal: require('./lib/marshal')
+  Marshal: require('./lib/marshal'),
+  BN: require('bn.js')
 };
