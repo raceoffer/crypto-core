@@ -86,11 +86,12 @@ const compoundTest = async function () {
   const initiatorId = Utils.sha256(Buffer.from('lammonaaf', 'utf-8')).toString('hex');
 
   let initiatorSeed = null;
-  if (await dds.exists(initiatorId)) {
-    const count = await dds.count(initiatorId);
+  const initiatorSecret = await Utils.getAccountSecret(initiatorId);
+  if (await dds.exists(initiatorSecret)) {
+    const count = await dds.count(initiatorSecret);
     const initiatorDDSData = [];
     for(let i=0; i<count; ++i) {
-      initiatorDDSData.push(await dds.read(initiatorId, i));
+      initiatorDDSData.push(await dds.read(initiatorSecret, i));
     }
     initiatorSeed = matchPredefinedRoute(initiatorDDSData, expandRoute.map(transformer));
     console.log('Initiator loaded seed from dds');
@@ -128,11 +129,12 @@ const compoundTest = async function () {
   const verifierId = Utils.sha256(Buffer.from('dorian', 'utf-8')).toString('hex');
 
   let verifierSeed = null;
-  if (await dds.exists(verifierId)) {
-    const count = await dds.count(verifierId);
+  const verifierSecret = await Utils.getAccountSecret(verifierId);
+  if (await dds.exists(verifierSecret)) {
+    const count = await dds.count(verifierSecret);
     const verifierDDSData = [];
     for(let i=0; i<count; ++i) {
-      verifierDDSData.push(await dds.read(verifierId, i));
+      verifierDDSData.push(await dds.read(verifierSecret, i));
     }
     verifierSeed = matchPredefinedRoute(verifierDDSData, expandRoute.map(transformer));
     console.log('Verifier loaded seed from dds');
