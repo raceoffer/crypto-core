@@ -1,32 +1,32 @@
-module.exports = {
-  KeyChain: require('./lib/primitives/keychain'),
+export { default as BN } from 'bn.js';
 
-  BitcoinWallet: require('./lib/wallet/bitcore/bitcoinwallet'),
-  BitcoinCashWallet: require('./lib/wallet/bitcore/bitcoincashwallet'),
-  LitecoinWallet: require('./lib/wallet/bitcore/litecoinwallet'),
-  EthereumWallet: require('./lib/wallet/ethereum/ethereumwallet'),
-  ERC20Wallet: require('./lib/wallet/ethereum/erc20wallet'),
+export { KeyChain } from './lib/primitives/keychain';
 
-  BlockCypherProvider: require('./lib/provider/blockcypherprovider'),
-  InsightProvider: require('./lib/provider/insightprovider'),
-  BlockchainInfoProvider: require('./lib/provider/blockchaininfoprovider'),
+export { BitcoinWallet } from './lib/wallet/bitcore/bitcoinwallet';
+export { BitcoinCashWallet } from './lib/wallet/bitcore/bitcoincashwallet';
+export { LitecoinWallet } from './lib/wallet/bitcore/litecoinwallet';
+export { EthereumWallet } from './lib/wallet/ethereum/ethereumwallet';
+export { ERC20Wallet } from './lib/wallet/ethereum/erc20wallet';
 
-  CompoundKey: require('./lib/primitives/compoundkey'),
+export { InsightProvider } from './lib/provider/insightprovider';
 
-  SchnorrProof: require('./lib/primitives/schnorrproof'),
-  PaillierProver: require('./lib/primitives/paillierprover'),
-  PaillierVerifier: require('./lib/primitives/paillierverifier'),
-  PedersenScheme: require('./lib/primitives/pedersenscheme'),
-  Signer: require('./lib/primitives/signer'),
+export { CompoundKey } from './lib/primitives/compoundkey';
 
-  BitcoinTransaction: require('./lib/transaction/bitcore/bitcointransaction'),
-  BitcoinCashTransaction: require('./lib/transaction/bitcore/bitcoincashtransaction'),
-  LitecoinTransaction: require('./lib/transaction/bitcore/litecointransaction'),
-  EthereumTransaction: require('./lib/transaction/ethereum/ethereumtransaction'),
+export { SchnorrProof } from './lib/primitives/schnorrproof';
+export { PaillierProver } from './lib/primitives/paillierprover';
+export { PaillierVerifier } from './lib/primitives/paillierverifier';
+export { PedersenScheme } from './lib/primitives/pedersenscheme';
+export { Signer } from './lib/primitives/signer';
 
-  DDS: require('./lib/primitives/dds'),
+export { BitcoinTransaction } from './lib/transaction/bitcore/bitcointransaction';
+export { BitcoinCashTransaction } from './lib/transaction/bitcore/bitcoincashtransaction';
+export { LitecoinTransaction } from './lib/transaction/bitcore/litecointransaction';
+export { EthereumTransaction } from './lib/transaction/ethereum/ethereumtransaction';
 
-  Utils: require('./lib/utils'),
-  Marshal: require('./lib/marshal'),
-  BN: require('bn.js')
-};
+export { DDS } from './lib/primitives/dds';
+
+import * as Utils from './lib/utils';
+export { Utils };
+
+import * as Marshal from './lib/marshal';
+export { Marshal };
