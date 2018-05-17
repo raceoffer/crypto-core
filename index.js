@@ -1,5 +1,3 @@
-export { default as BN } from 'bn.js';
-
 export { KeyChain } from './lib/primitives/keychain';
 
 export { BitcoinWallet } from './lib/wallet/bitcore/bitcoinwallet';
