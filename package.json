@@ -2,8 +2,9 @@
   "name": "crypto-core",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index",
   "scripts": {
+    "transpile": "babel . --extensions \".mjs\" --out-dir .",
     "test": ""
   },
   "author": "",
@@ -32,5 +33,11 @@
     "web3": "^1.0.0-beta.34",
     "web3-core-helpers": "^1.0.0-beta.34",
     "web3-utils": "^1.0.0-beta.34"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-es2015-modules-simple-commonjs": "^0.3.0",
+    "babel-preset-env": "^1.7.0"
   }
 }
