@@ -5,6 +5,7 @@
   "main": "index",
   "scripts": {
     "transpile": "babel . --extensions \".mjs\" --out-dir .",
+    "postinstall": "babel . --extensions \".mjs\" --out-dir .",
     "test": ""
   },
   "author": "",
