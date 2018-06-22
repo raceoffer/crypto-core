@@ -8,15 +8,15 @@ export { ERC20Wallet } from './lib/wallet/ethereum/erc20wallet';
 
 export { InsightProvider } from './lib/provider/insightprovider';
 
-export { CompoundKey } from './lib/primitives/compoundkey';
-export { CompoundKeyEddsa } from './lib/primitives/compoundkey-eddsa';
+export { CompoundKey as CompoundKeyEcdsa } from './lib/primitives/ecdsa/compoundkey';
+export { CompoundKey as CompoundKeyEddsa } from './lib/primitives/eddsa/compoundkey';
 
 export { SchnorrProof } from './lib/primitives/schnorrproof';
-export { PaillierProver } from './lib/primitives/paillierprover';
-export { PaillierVerifier } from './lib/primitives/paillierverifier';
+export { PaillierProver } from './lib/primitives/ecdsa/paillierprover';
+export { PaillierVerifier } from './lib/primitives/ecdsa/paillierverifier';
 export { PedersenScheme } from './lib/primitives/pedersenscheme';
-export { Signer } from './lib/primitives/signer';
-export { SignerEddsa } from './lib/primitives/signer-eddsa';
+export { Signer as SignerEcdsa } from './lib/primitives/ecdsa/signer';
+export { Signer as SignerEddsa } from './lib/primitives/eddsa/signer';
 
 export { BitcoinTransaction } from './lib/transaction/bitcore/bitcointransaction';
 export { BitcoinCashTransaction } from './lib/transaction/bitcore/bitcoincashtransaction';
