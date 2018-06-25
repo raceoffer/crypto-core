@@ -2,6 +2,7 @@
     core,
     nem
 )=>{
+    const Helpers = nem.utils.helpers;
     const Convert = nem.utils.convert;
     const Serialization = nem.utils.serialization;
     const Requests = nem.com.requests;
@@ -16,7 +17,7 @@
 
     const hash = Serialization.serializeTransaction(transactionEntity);
 
-    const keyPair = core.KeyPair.fromHex(common.privateKey, 'ed25519');
+    const keyPair = core.KeyPair.fromHex(Helpers.fixPrivateKey(common.privateKey), 'ed25519');
 
     const signature = keyPair.sign(hash).toHex().toLowerCase();
 
