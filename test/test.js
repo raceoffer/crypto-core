@@ -2,14 +2,15 @@
     core,
     nem
 )=>{
-    const Helpers = nem.utils.helpers;
     const Convert = nem.utils.convert;
     const Serialization = nem.utils.serialization;
     const Requests = nem.com.requests;
 
     const endpoint = nem.model.objects.create("endpoint")(nem.model.nodes.defaultTestnet, nem.model.nodes.defaultPort);
 
-    const common = nem.model.objects.create("common")('', core.Utils.randomBytes(32).toString('hex'));
+    const secret = core.Utils.randomBytes(32);
+
+    const common = nem.model.objects.create("common")('', secret.toString('hex'));
 
     const transferTransaction = nem.model.objects.create("transferTransaction")("TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S", 10, "Hello");
 
@@ -17,7 +18,7 @@
 
     const hash = Serialization.serializeTransaction(transactionEntity);
 
-    const keyPair = core.KeyPair.fromHex(Helpers.fixPrivateKey(common.privateKey), 'ed25519');
+    const keyPair = core.KeyPair.fromSecret(secret, 'ed25519');
 
     const signature = keyPair.sign(hash).toHex().toLowerCase();
 
