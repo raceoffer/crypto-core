@@ -8,6 +8,8 @@ export { ERC20Wallet } from './lib/wallet/ethereum/erc20wallet';
 
 export { InsightProvider } from './lib/provider/insightprovider';
 
+export { KeyPair } from './lib/primitives/eddsa/keypair';
+
 export { CompoundKey as CompoundKeyEcdsa } from './lib/primitives/ecdsa/compoundkey';
 export { CompoundKey as CompoundKeyEddsa } from './lib/primitives/eddsa/compoundkey';
 
