@@ -39,7 +39,7 @@
             point: initiator.compoundPublic
         });
 
-        console.log(nemWallet.address, ':', nemWallet.fromInternal((await nemWallet.getBalance()).unconfirmed), 'XEM');
+        console.log(nemWallet.address, ':', nemWallet.fromInternal((await nemWallet.getBalance()).unconfirmed), 'NEM');
 
         const tx = await nemWallet.prepareTransaction({fromOptions: tx => tx}, 'TCLT5G-RRTWIO-HXE2NG-XLAXLT-U24OSM-7YZXBD-BEZR', 10);
 
