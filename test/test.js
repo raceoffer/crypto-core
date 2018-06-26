@@ -1,10 +1,10 @@
-((
+(async (
     core,
     assert,
     eddsa,
     Buffer,
     nem
-)=>{
+) => {
     const Helpers = nem.utils.helpers;
     const Convert = nem.utils.convert;
     const Serialization = nem.utils.serialization;
@@ -47,7 +47,7 @@
 
     const endpoint = nem.model.objects.create("endpoint")(nem.model.nodes.defaultTestnet, nem.model.nodes.defaultPort);
 
-    const seed = core.Utils.randomBytes(64);
+    const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
 
     const keyChain = core.KeyChain.fromSeed(seed);
 
@@ -72,9 +72,15 @@
     initiator.importSyncData(iSyncData);
     verifier.importSyncData(vSyncData);
 
-    const transferTransaction = nem.model.objects.create("transferTransaction")("TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S", 10, "Hello");
-
     const publicKey = Buffer.from(eddsa.encodePoint(initiator.compoundPublic)).toString('hex');
+
+    const address = nem.model.address.toAddress(publicKey, nem.model.network.data.testnet.id);
+
+    const data = await Requests.account.data(endpoint, address);
+
+    console.log(address, ':', data.account.balance, 'XEM');
+
+    const transferTransaction = nem.model.objects.create("transferTransaction")("TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S", 10, "Hello");
 
     const transactionEntity = prepare(publicKey, transferTransaction, nem.model.network.data.testnet.id);
 
@@ -96,8 +102,6 @@
 
     const signature = iSigner.combineSignatures(vPartialSignature).toHex().toLowerCase();
 
-    //const signature = initiator.localPrivateKey.sign(hash).toHex().toLowerCase();
-
     assert(nem.crypto.verifySignature(publicKey, hash, signature));
 
     const blob = {
@@ -105,9 +109,9 @@
         'signature': signature
     };
 
-    Requests.transaction.announce(endpoint, JSON.stringify(blob)).then(r => {
-        console.log(r);
-    });
+    const result = await Requests.transaction.announce(endpoint, JSON.stringify(blob));
+
+    console.log(result);
 })(
     require('..'),
     require('assert'),
