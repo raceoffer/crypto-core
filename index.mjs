@@ -5,6 +5,7 @@ export { BitcoinCashWallet } from './lib/wallet/bitcore/bitcoincashwallet';
 export { LitecoinWallet } from './lib/wallet/bitcore/litecoinwallet';
 export { EthereumWallet } from './lib/wallet/ethereum/ethereumwallet';
 export { ERC20Wallet } from './lib/wallet/ethereum/erc20wallet';
+export { NemWallet } from "./lib/wallet/nem/nemwallet";
 
 export { InsightProvider } from './lib/provider/insightprovider';
 

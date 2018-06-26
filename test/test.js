@@ -5,113 +5,75 @@
     Buffer,
     nem
 ) => {
-    const Helpers = nem.utils.helpers;
-    const Convert = nem.utils.convert;
-    const Serialization = nem.utils.serialization;
-    const Requests = nem.com.requests;
-    const Network = nem.model.network;
-    const Transactions = nem.model.transactions;
-    const Fees = nem.model.fees;
-    const TransactionTypes = nem.model.transactionTypes;
-    const Objects = nem.model.objects;
+    try {
+        const Convert = nem.utils.convert;
+        const Serialization = nem.utils.serialization;
 
-    const construct = function(senderPublicKey, recipientCompressedKey, amount, message, msgFee, due, mosaics, mosaicsFee, network) {
-        let timeStamp = Helpers.createNEMTimeStamp();
-        let version = mosaics ? Network.getVersion(2, network) : Network.getVersion(1, network);
-        let data = Objects.create("commonTransactionPart")(TransactionTypes.transfer, senderPublicKey, timeStamp, due, version);
-        let fee = mosaics ? mosaicsFee : Fees.currentFeeFactor * Fees.calculateMinimum(amount / 1000000);
-        let totalFee = Math.floor((msgFee + fee) * 1000000);
-        let custom = {
-            'recipient': recipientCompressedKey.toUpperCase().replace(/-/g, ''),
-            'amount': amount,
-            'fee': totalFee,
-            'message': message,
-            'mosaics': mosaics
+        const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
+
+        const keyChain = core.KeyChain.fromSeed(seed);
+
+        const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
+        const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
+
+        let initiator = core.CompoundKeyEddsa.fromSecret(initiatorPrivateBytes, 'ed25519');
+        let verifier = core.CompoundKeyEddsa.fromSecret(verifierPrivateBytes, 'ed25519');
+
+        const iSyncSession = initiator.startSyncSession();
+        const vSyncSession = verifier.startSyncSession();
+
+        const iCommitment = iSyncSession.createCommitment();
+        const vCommitment = vSyncSession.createCommitment();
+
+        const iDecommitment = iSyncSession.processCommitment(vCommitment);
+        const vDecommitment = vSyncSession.processCommitment(iCommitment);
+
+        const iSyncData = iSyncSession.processDecommitment(vDecommitment);
+        const vSyncData = vSyncSession.processDecommitment(iDecommitment);
+
+        initiator.importSyncData(iSyncData);
+        verifier.importSyncData(vSyncData);
+
+        const nemWallet = core.NemWallet.fromOptions({
+            network: core.NemWallet.Testnet,
+            point: initiator.compoundPublic
+        });
+
+        console.log(nemWallet.address, ':', nemWallet.fromInternal((await nemWallet.getBalance()).unconfirmed), 'XEM');
+
+        const tx = await nemWallet.prepareTransaction({fromOptions: tx => tx}, 'TCLT5G-RRTWIO-HXE2NG-XLAXLT-U24OSM-7YZXBD-BEZR', 10);
+
+        const hash = Serialization.serializeTransaction(tx);
+
+        const iSigner = initiator.startSignSession(hash);
+        const vSigner = verifier.startSignSession(hash);
+
+        const iSCommitment = iSigner.createCommitment();
+        const vSCommitment = vSigner.createCommitment();
+
+        const iSDecommitment = iSigner.processCommitment(vSCommitment);
+        const vSDecommitment = vSigner.processCommitment(iSCommitment);
+
+        iSigner.processDecommitment(vSDecommitment);
+        vSigner.processDecommitment(iSDecommitment);
+
+        const vPartialSignature = vSigner.computePartialSignature();
+
+        const signature = iSigner.combineSignatures(vPartialSignature).toHex().toLowerCase();
+
+        assert(nem.crypto.verifySignature(nemWallet.publicKey, hash, signature));
+
+        const blob = {
+            'data': Convert.ua2hex(hash),
+            'signature': signature
         };
-        return Helpers.extendObj(data, custom);
-    };
 
-    const prepare = function(publicKey, tx, network){
-        assert(!tx.isMultisig);
+        //await nemWallet.sendSignedTransaction(blob);
 
-        let actualSender = publicKey;
-        let recipientCompressedKey = tx.recipient.toString();
-        let amount = Math.round(tx.amount * 1000000);
-        let message = Transactions.prepareMessage(null, tx);
-        let msgFee = Fees.calculateMessage(message, false);
-        let due = network === Network.data.testnet.id ? 60 : 24 * 60;
-        let mosaics = null;
-        let mosaicsFee = null;
-        return construct(actualSender, recipientCompressedKey, amount, message, msgFee, due, mosaics, mosaicsFee, network);
-    };
-
-    const endpoint = nem.model.objects.create("endpoint")(nem.model.nodes.defaultTestnet, nem.model.nodes.defaultPort);
-
-    const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
-
-    const keyChain = core.KeyChain.fromSeed(seed);
-
-    const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
-    const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
-
-    let initiator = core.CompoundKeyEddsa.fromSecret(initiatorPrivateBytes, 'ed25519');
-    let verifier = core.CompoundKeyEddsa.fromSecret(verifierPrivateBytes, 'ed25519');
-
-    const iSyncSession = initiator.startSyncSession();
-    const vSyncSession = verifier.startSyncSession();
-
-    const iCommitment = iSyncSession.createCommitment();
-    const vCommitment = vSyncSession.createCommitment();
-
-    const iDecommitment = iSyncSession.processCommitment(vCommitment);
-    const vDecommitment = vSyncSession.processCommitment(iCommitment);
-
-    const iSyncData = iSyncSession.processDecommitment(vDecommitment);
-    const vSyncData = vSyncSession.processDecommitment(iDecommitment);
-
-    initiator.importSyncData(iSyncData);
-    verifier.importSyncData(vSyncData);
-
-    const publicKey = Buffer.from(eddsa.encodePoint(initiator.compoundPublic)).toString('hex');
-
-    const address = nem.model.address.toAddress(publicKey, nem.model.network.data.testnet.id);
-
-    const data = await Requests.account.data(endpoint, address);
-
-    console.log(address, ':', data.account.balance, 'XEM');
-
-    const transferTransaction = nem.model.objects.create("transferTransaction")("TBCI2A67UQZAKCR6NS4JWAEICEIGEIM72G3MVW5S", 10, "Hello");
-
-    const transactionEntity = prepare(publicKey, transferTransaction, nem.model.network.data.testnet.id);
-
-    const hash = Serialization.serializeTransaction(transactionEntity);
-
-    const iSigner = initiator.startSignSession(hash);
-    const vSigner = verifier.startSignSession(hash);
-
-    const iSCommitment = iSigner.createCommitment();
-    const vSCommitment = vSigner.createCommitment();
-
-    const iSDecommitment = iSigner.processCommitment(vSCommitment);
-    const vSDecommitment = vSigner.processCommitment(iSCommitment);
-
-    iSigner.processDecommitment(vSDecommitment);
-    vSigner.processDecommitment(iSDecommitment);
-
-    const vPartialSignature = vSigner.computePartialSignature();
-
-    const signature = iSigner.combineSignatures(vPartialSignature).toHex().toLowerCase();
-
-    assert(nem.crypto.verifySignature(publicKey, hash, signature));
-
-    const blob = {
-        'data': Convert.ua2hex(hash),
-        'signature': signature
-    };
-
-    const result = await Requests.transaction.announce(endpoint, JSON.stringify(blob));
-
-    console.log(result);
+        console.log('OK');
+    } catch (e) {
+        console.error(e);
+    }
 })(
     require('..'),
     require('assert'),
