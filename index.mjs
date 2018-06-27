@@ -25,6 +25,7 @@ export { BitcoinTransaction } from './lib/transaction/bitcore/bitcointransaction
 export { BitcoinCashTransaction } from './lib/transaction/bitcore/bitcoincashtransaction';
 export { LitecoinTransaction } from './lib/transaction/bitcore/litecointransaction';
 export { EthereumTransaction } from './lib/transaction/ethereum/ethereumtransaction';
+export { NemTransaction } from './lib/transaction/nem/nemtransaction';
 
 export { DDS } from './lib/primitives/dds';
 

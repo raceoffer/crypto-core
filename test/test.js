@@ -1,14 +1,11 @@
 (async (
     core,
     assert,
-    eddsa,
-    Buffer,
-    nem
+    Buffer
 ) => {
-    try {
-        const Convert = nem.utils.convert;
-        const Serialization = nem.utils.serialization;
+    const rewrap = arg => core.Marshal.unwrap(JSON.parse(JSON.stringify(core.Marshal.wrap(arg))));
 
+    try {
         const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
 
         const keyChain = core.KeyChain.fromSeed(seed);
@@ -16,20 +13,27 @@
         const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
         const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
 
-        let initiator = core.CompoundKeyEddsa.fromSecret(initiatorPrivateBytes, 'ed25519');
-        let verifier = core.CompoundKeyEddsa.fromSecret(verifierPrivateBytes, 'ed25519');
+        const initiator = rewrap(core.CompoundKeyEddsa.fromOptions({
+            curve: 'ed25519',
+            secret: initiatorPrivateBytes
+        }));
 
-        const iSyncSession = initiator.startSyncSession();
-        const vSyncSession = verifier.startSyncSession();
+        const verifier = rewrap(core.CompoundKeyEddsa.fromOptions({
+            curve: 'ed25519',
+            secret: verifierPrivateBytes
+        }));
 
-        const iCommitment = iSyncSession.createCommitment();
-        const vCommitment = vSyncSession.createCommitment();
+        const iSyncSession = rewrap(initiator.startSyncSession());
+        const vSyncSession = rewrap(verifier.startSyncSession());
 
-        const iDecommitment = iSyncSession.processCommitment(vCommitment);
-        const vDecommitment = vSyncSession.processCommitment(iCommitment);
+        const iCommitment = rewrap(iSyncSession.createCommitment());
+        const vCommitment = rewrap(vSyncSession.createCommitment());
 
-        const iSyncData = iSyncSession.processDecommitment(vDecommitment);
-        const vSyncData = vSyncSession.processDecommitment(iDecommitment);
+        const iDecommitment = rewrap(iSyncSession.processCommitment(vCommitment));
+        const vDecommitment = rewrap(vSyncSession.processCommitment(iCommitment));
+
+        const iSyncData = rewrap(iSyncSession.processDecommitment(vDecommitment));
+        const vSyncData = rewrap(vSyncSession.processDecommitment(iDecommitment));
 
         initiator.importSyncData(iSyncData);
         verifier.importSyncData(vSyncData);
@@ -41,34 +45,30 @@
 
         console.log(nemWallet.address, ':', nemWallet.fromInternal((await nemWallet.getBalance()).unconfirmed), 'NEM');
 
-        const tx = await nemWallet.prepareTransaction({fromOptions: tx => tx}, 'TCLT5G-RRTWIO-HXE2NG-XLAXLT-U24OSM-7YZXBD-BEZR', 10);
+        const iTX = rewrap(await nemWallet.prepareTransaction(rewrap(core.NemTransaction.create()), 'TCLT5GRRTWIOHXE2NGXLAXLTU24OSM7YZXBDBEZR', 10));
+        const vTX = rewrap(await nemWallet.prepareTransaction(rewrap(core.NemTransaction.create()), 'TCLT5GRRTWIOHXE2NGXLAXLTU24OSM7YZXBDBEZR', 10));
 
-        const hash = Serialization.serializeTransaction(tx);
+        iTX.startSignSession(initiator);
+        vTX.startSignSession(verifier);
 
-        const iSigner = initiator.startSignSession(hash);
-        const vSigner = verifier.startSignSession(hash);
+        const iSCommitment = rewrap(iTX.createCommitment());
+        const vSCommitment = rewrap(vTX.createCommitment());
 
-        const iSCommitment = iSigner.createCommitment();
-        const vSCommitment = vSigner.createCommitment();
+        const iSDecommitment = rewrap(iTX.processCommitment(vSCommitment));
+        const vSDecommitment = rewrap(vTX.processCommitment(iSCommitment));
 
-        const iSDecommitment = iSigner.processCommitment(vSCommitment);
-        const vSDecommitment = vSigner.processCommitment(iSCommitment);
+        iTX.processDecommitment(vSDecommitment);
+        vTX.processDecommitment(iSDecommitment);
 
-        iSigner.processDecommitment(vSDecommitment);
-        vSigner.processDecommitment(iSDecommitment);
+        const vPartialSignature = rewrap(vTX.computeSignature());
 
-        const vPartialSignature = vSigner.computePartialSignature();
+        iTX.applySignature(vPartialSignature);
 
-        const signature = iSigner.combineSignatures(vPartialSignature).toHex().toLowerCase();
+        assert(iTX.verify());
 
-        assert(nem.crypto.verifySignature(nemWallet.publicKey, hash, signature));
+        const blob = iTX.toRaw();
 
-        const blob = {
-            'data': Convert.ua2hex(hash),
-            'signature': signature
-        };
-
-        //await nemWallet.sendSignedTransaction(blob);
+        await nemWallet.sendSignedTransaction(blob);
 
         console.log('OK');
     } catch (e) {
@@ -77,7 +77,5 @@
 })(
     require('..'),
     require('assert'),
-    require('elliptic').eddsa('ed25519'),
-    require('buffer').Buffer,
-    require('nem-sdk').default
+    require('buffer').Buffer
 );
