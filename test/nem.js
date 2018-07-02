@@ -38,7 +38,7 @@ describe('NEM', () => {
 
     const nemWallet = core.NemWallet.fromOptions({
         network: core.NemWallet.Testnet,
-        point: initiator.compoundPublic
+        point: initiator.compoundPublic()
     });
 
     chai.expect(nemWallet.address).to.equal('TBIOTLAM5TOEWV5ECCE7MR3PSQFV76BTS5IHBXX2');

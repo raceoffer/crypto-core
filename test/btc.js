@@ -63,7 +63,7 @@ describe('BTC', () => {
 
     const btcWallet = core.BitcoinWallet.fromOptions({
       network: core.BitcoinWallet.Testnet,
-      point: initiator.compoundPublic,
+      point: initiator.compoundPublic(),
       endpoint: 'https://test-insight.bitpay.com/api'
     });
 

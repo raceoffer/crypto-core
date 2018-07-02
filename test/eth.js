@@ -57,7 +57,7 @@ describe('ETH', () => {
 
     const ethWallet = core.EthereumWallet.fromOptions({
       network: core.EthereumWallet.Testnet,
-      point: initiator.compoundPublic,
+      point: initiator.compoundPublic(),
       endpoint: 'https://rinkeby.infura.io/dlYX0gLUjGGCk7IBFq2C'
     });
 
