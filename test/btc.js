@@ -11,7 +11,7 @@ describe('BTC', () => {
     const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
     const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
 
-    const paillierKeys = core.CompoundKeyEcdsa.generatePaillierKeys();
+    const paillierKeys = rewrap(core.CompoundKeyEcdsa.generatePaillierKeys());
 
     let initiator = rewrap(core.CompoundKeyEcdsa.fromOptions({
       curve: 'secp256k1',
