@@ -5,7 +5,7 @@
   "main": "index",
   "scripts": {
     "transpile": "babel . --extensions \".mjs\" --out-dir .",
-    "test": "mocha"
+    "test": "npm run transpile && mocha"
   },
   "author": "",
   "license": "ISC",
