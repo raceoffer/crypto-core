@@ -5,21 +5,27 @@ export { BitcoinCashWallet } from './lib/wallet/bitcore/bitcoincashwallet';
 export { LitecoinWallet } from './lib/wallet/bitcore/litecoinwallet';
 export { EthereumWallet } from './lib/wallet/ethereum/ethereumwallet';
 export { ERC20Wallet } from './lib/wallet/ethereum/erc20wallet';
+export { NemWallet } from "./lib/wallet/nem/nemwallet";
 
 export { InsightProvider } from './lib/provider/insightprovider';
 
-export { CompoundKey } from './lib/primitives/compoundkey';
+export { KeyPair } from './lib/primitives/eddsa/keypair';
+
+export { CompoundKey as CompoundKeyEcdsa } from './lib/primitives/ecdsa/compoundkey';
+export { CompoundKey as CompoundKeyEddsa } from './lib/primitives/eddsa/compoundkey';
 
 export { SchnorrProof } from './lib/primitives/schnorrproof';
-export { PaillierProver } from './lib/primitives/paillierprover';
-export { PaillierVerifier } from './lib/primitives/paillierverifier';
+export { PaillierProver } from './lib/primitives/ecdsa/paillierprover';
+export { PaillierVerifier } from './lib/primitives/ecdsa/paillierverifier';
 export { PedersenScheme } from './lib/primitives/pedersenscheme';
-export { Signer } from './lib/primitives/signer';
+export { Signer as SignerEcdsa } from './lib/primitives/ecdsa/signer';
+export { Signer as SignerEddsa } from './lib/primitives/eddsa/signer';
 
 export { BitcoinTransaction } from './lib/transaction/bitcore/bitcointransaction';
 export { BitcoinCashTransaction } from './lib/transaction/bitcore/bitcoincashtransaction';
 export { LitecoinTransaction } from './lib/transaction/bitcore/litecointransaction';
 export { EthereumTransaction } from './lib/transaction/ethereum/ethereumtransaction';
+export { NemTransaction } from './lib/transaction/nem/nemtransaction';
 
 export { DDS } from './lib/primitives/dds';
 

@@ -1,11 +1,11 @@
 {
   "name": "crypto-core",
-  "version": "0.11.0",
+  "version": "0.13.0",
   "description": "",
   "main": "index",
   "scripts": {
     "transpile": "babel . --extensions \".mjs\" --out-dir .",
-    "test": ""
+    "test": "npm run transpile && mocha"
   },
   "author": "",
   "license": "ISC",
@@ -24,9 +24,11 @@
     "hash.js": "^1.1.3",
     "hmac-drbg": "^1.0.1",
     "human-standard-token-abi": "^1.0.2",
+    "js-sha3": "^0.7.0",
     "jsbn": "latest",
     "jspaillier": "^0.1.1",
     "litecore-lib": "latest",
+    "nem-sdk": "^1.6.6",
     "pbkdf2": "^3.0.16",
     "randombytes": "^2.0.6",
     "request-promise-native": "^1.0.5",
@@ -39,6 +41,8 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-plugin-transform-es2015-modules-simple-commonjs": "^0.3.0",
-    "babel-preset-env": "^1.7.0"
+    "babel-preset-env": "^1.7.0",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
   }
 }
