@@ -6,6 +6,7 @@ export { LitecoinWallet } from './lib/wallet/bitcore/litecoinwallet';
 export { EthereumWallet } from './lib/wallet/ethereum/ethereumwallet';
 export { ERC20Wallet } from './lib/wallet/ethereum/erc20wallet';
 export { NemWallet } from "./lib/wallet/nem/nemwallet";
+export { NeoWallet } from "./lib/wallet/neo/neowallet";
 
 export { InsightProvider } from './lib/provider/insightprovider';
 
@@ -26,6 +27,7 @@ export { BitcoinCashTransaction } from './lib/transaction/bitcore/bitcoincashtra
 export { LitecoinTransaction } from './lib/transaction/bitcore/litecointransaction';
 export { EthereumTransaction } from './lib/transaction/ethereum/ethereumtransaction';
 export { NemTransaction } from './lib/transaction/nem/nemtransaction';
+export { NeoTransaction } from './lib/transaction/neo/neotransaction';
 
 export { DDS } from './lib/primitives/dds';
 
