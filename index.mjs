@@ -15,10 +15,12 @@ export { KeyPair } from './lib/primitives/eddsa/keypair';
 export { CompoundKey as CompoundKeyEcdsa } from './lib/primitives/ecdsa/compoundkey';
 export { CompoundKey as CompoundKeyEddsa } from './lib/primitives/eddsa/compoundkey';
 
+export { DistributedKey as DistributedKeyEcdsa, DistributedKeyShard as DistributedKeyShardEcdsa } from './lib/primitives/ecdsa/distributedkey';
+
 export { SchnorrProof } from './lib/primitives/schnorrproof';
 export { PaillierProver } from './lib/primitives/ecdsa/paillierprover';
 export { PaillierVerifier } from './lib/primitives/ecdsa/paillierverifier';
-export { PedersenScheme } from './lib/primitives/pedersenscheme';
+export { PedersenScheme, PedersenParameters, PedersenCommitment, PedersenDecommitment } from './lib/primitives/pedersenscheme';
 export { Signer as SignerEcdsa } from './lib/primitives/ecdsa/signer';
 export { Signer as SignerEddsa } from './lib/primitives/eddsa/signer';
 
@@ -30,6 +32,9 @@ export { NemTransaction } from './lib/transaction/nem/nemtransaction';
 export { NeoTransaction } from './lib/transaction/neo/neotransaction';
 
 export { DDS } from './lib/primitives/dds';
+
+import * as Convert from './lib/convert';
+export { Convert };
 
 import * as Utils from './lib/utils';
 export { Utils };
