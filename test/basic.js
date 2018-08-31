@@ -38,6 +38,10 @@ describe('Basic', () => {
     const responseDecommitment = proover.processChallengeDecommitment(challengeDecommitment);
     const syncData = verifier.processResponseDecommitment(responseDecommitment);
 
-    console.log(syncData);
+    distributedKey.importSyncData(initialData);
+    distributedKeyShard.importSyncData(syncData);
+
+    console.log(distributedKey.compoundPublic());
+    console.log(distributedKeyShard.compoundPublic());
   }).timeout(10000);
 });
