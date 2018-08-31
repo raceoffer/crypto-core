@@ -18,9 +18,9 @@ export { CompoundKey as CompoundKeyEddsa } from './lib/primitives/eddsa/compound
 export { DistributedKey as DistributedKeyEcdsa, DistributedKeyShard as DistributedKeyShardEcdsa } from './lib/primitives/ecdsa/distributedkey';
 
 export { SchnorrProof } from './lib/primitives/schnorrproof';
-export { PaillierProver } from './lib/primitives/ecdsa/paillierprover';
-export { PaillierVerifier } from './lib/primitives/ecdsa/paillierverifier';
-export { PedersenScheme, PedersenParameters, PedersenCommitment, PedersenDecommitment } from './lib/primitives/pedersenscheme';
+export { PedersenScheme } from './lib/primitives/pedersenscheme';
+export { PaillierProver, InitialCommitment, InitialDecommitment, ResponseCommitment, ResponseDecommitment } from './lib/primitives/ecdsa/paillierprover';
+export { PaillierVerifier, InitialData, ChallengeCommitment, ChallengeDecommitment, SyncData } from './lib/primitives/ecdsa/paillierverifier';
 export { Signer as SignerEcdsa } from './lib/primitives/ecdsa/signer';
 export { Signer as SignerEddsa } from './lib/primitives/eddsa/signer';
 
