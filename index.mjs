@@ -12,9 +12,6 @@ export { InsightProvider } from './lib/provider/insightprovider';
 
 export { KeyPair } from './lib/primitives/eddsa/keypair';
 
-export { CompoundKey as CompoundKeyEcdsa } from './lib/primitives/ecdsa/compoundkey';
-export { CompoundKey as CompoundKeyEddsa } from './lib/primitives/eddsa/compoundkey';
-
 export { DistributedKey as DistributedKeyEcdsa, DistributedKeyShard as DistributedKeyShardEcdsa } from './lib/primitives/ecdsa/distributedkey';
 
 export { PaillierPublicKey, PaillierSecretKey } from './lib/primitives/ecdsa/paillierkeys';
@@ -35,7 +32,7 @@ export { NeoTransaction } from './lib/transaction/neo/neotransaction';
 
 export { DDS } from './lib/primitives/dds';
 
-export { Curve } from './lib/curves';
+export { Curve, matchCurve } from './lib/curves';
 
 import * as Convert from './lib/convert';
 export { Convert };

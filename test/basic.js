@@ -6,6 +6,13 @@ const fromJSON = core.Convert.fromJSON;
 const toBytes = core.Convert.toJSON;
 const fromBytes = core.Convert.fromJSON;
 
+const encodeBuffer = core.Convert.encodeBuffer;
+const encodeBN = core.Convert.encodeBN;
+const encodeBigInteger = core.Convert.encodeBigInteger;
+const encodePoint = core.Convert.encodePoint;
+
+const matchCurve = core.matchCurve;
+
 const Curve = core.Curve;
 const PaillierPublicKey = core.PaillierPublicKey;
 const PaillierSecretKey = core.PaillierSecretKey;
