@@ -47,3 +47,14 @@ message PaillierProver {
   PaillierSecretKey localPaillier_secret_key = 11;
   PedersenScheme local_pedersen_scheme = 12;
 }
+
+message InitialCommitmentMessage {
+  PaillierPublicKey paillierPublicKey = 1;
+  bytes publicPoint = 2;
+  bytes chiphertext = 3;
+}
+
+message ChallengeCommitmentMessage {
+  bytes a = 1;
+  bytes b = 2;
+}
