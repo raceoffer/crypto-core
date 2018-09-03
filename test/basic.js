@@ -16,7 +16,8 @@ const ChallengeDecommitment = core.ChallengeDecommitment;
 const ResponseCommitment = core.ResponseCommitment;
 const ResponseDecommitment = core.ResponseDecommitment;
 const InitialData = core.InitialData;
-const SyncData = core.SyncData;
+const ProoverSyncData = core.ProoverSyncData;
+const VerifierSyncData = core.VerifierSyncData;
 
 const rewrap = (type, value) => fromJSON(type, toJSON(value));
 
@@ -54,11 +55,12 @@ describe('Basic', () => {
     const responseCommitment = rewrap(ResponseCommitment, proover.processChallengeCommitment(challengeCommitment));
     const challengeDecommitment = rewrap(ChallengeDecommitment, verifier.processResponseCommitment(responseCommitment));
 
-    const responseDecommitment = rewrap(ResponseDecommitment, proover.processChallengeDecommitment(challengeDecommitment));
-    const syncData = rewrap(SyncData, verifier.processResponseDecommitment(responseDecommitment));
+    const { prooverSyncData, responseDecommitment } = proover.processChallengeDecommitment(challengeDecommitment);
 
-    distributedKey.importSyncData(initialData);
-    distributedKeyShard.importSyncData(syncData);
+    const verifierSyncData = rewrap(VerifierSyncData, verifier.processResponseDecommitment(responseDecommitment));
+
+    distributedKey.importSyncData(prooverSyncData);
+    distributedKeyShard.importSyncData(verifierSyncData);
 
     console.log(distributedKey.compoundPublic());
     console.log(distributedKeyShard.compoundPublic());
