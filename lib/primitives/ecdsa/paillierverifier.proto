@@ -1,0 +1,47 @@
+syntax = 'proto3';
+
+import "paillierkeys.proto";
+import "pedersenscheme.proto";
+import "schnorrproof.proto";
+
+message InitialData {
+  int32 curve = 1;
+  bytes pedersen_parameters = 2;
+  bytes public_point = 3;
+  SchnorrProof schnorr_proof = 4;
+}
+
+message ChallengeCommitment {
+  int32 curve = 1;
+  bytes challenge = 2;
+  bytes reveal_commitment = 3;
+}
+
+message ChallengeDecommitment {
+  int32 curve = 1;
+  bytes reveal_decommitment = 2;
+  bytes a = 3;
+  bytes b = 4;
+}
+
+message VerifierSyncData {
+  int32 curve = 1;
+  bytes public_point = 2;
+  bytes ciphertext = 3;
+  PaillierPublicKey paillier_public_key = 4;
+}
+
+message PaillierVerifier {
+  int32 curve = 1;
+  bytes local_private_key = 2;
+  bytes a = 3;
+  bytes b = 4;
+  bytes remote_public_point = 5;
+  bytes remote_ciphertext = 6;
+  bytes remote_pedersen_parameters = 7;
+  bytes remote_initial_commitment = 8;
+  bytes local_reveal_decommitment = 9;
+  bytes remote_response_commitment = 10;
+  PedersenScheme local_pedersen_scheme = 11;
+  PaillierPublicKey remote_paillier_public_key = 12;
+}

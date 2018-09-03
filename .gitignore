@@ -1,4 +1,6 @@
 node_modules
 /.idea/
-*.js
+/lib/**/*.js
+/lib/**/*.json
+index.js
 !test/*

@@ -3,7 +3,12 @@ const core = require('..');
 
 const toJSON = core.Convert.toJSON;
 const fromJSON = core.Convert.fromJSON;
+const toBytes = core.Convert.toJSON;
+const fromBytes = core.Convert.fromJSON;
 
+const Curve = core.Curve;
+const PaillierPublicKey = core.PaillierPublicKey;
+const PaillierSecretKey = core.PaillierSecretKey;
 const PaillierProover = core.PaillierProver;
 const PaillierVerifier = core.PaillierVerifier;
 const KeyChain = core.KeyChain;
@@ -16,10 +21,10 @@ const ChallengeDecommitment = core.ChallengeDecommitment;
 const ResponseCommitment = core.ResponseCommitment;
 const ResponseDecommitment = core.ResponseDecommitment;
 const InitialData = core.InitialData;
-const ProoverSyncData = core.ProoverSyncData;
+const ProverSyncData = core.ProverSyncData;
 const VerifierSyncData = core.VerifierSyncData;
 
-const rewrap = (type, value) => fromJSON(type, toJSON(value));
+const rewrap = (type, value) => fromBytes(type, toBytes(value));
 
 const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
 
@@ -33,13 +38,13 @@ describe('Basic', () => {
     const paillierKeys = DistributedKeyEcdsa.generatePaillierKeys();
 
     const distributedKey = rewrap(DistributedKeyEcdsa, DistributedKeyEcdsa.fromOptions({
-      curve: 'secp256k1',
+      curve: Curve.secp256k1,
       secret: initiatorPrivateBytes,
       paillierKeys
     }));
 
     const distributedKeyShard = rewrap(DistributedKeyShardEcdsa, DistributedKeyShardEcdsa.fromOptions({
-      curve: 'secp256k1',
+      curve: Curve.secp256k1,
       secret: verifierPrivateBytes
     }));
 
@@ -55,11 +60,11 @@ describe('Basic', () => {
     const responseCommitment = rewrap(ResponseCommitment, proover.processChallengeCommitment(challengeCommitment));
     const challengeDecommitment = rewrap(ChallengeDecommitment, verifier.processResponseCommitment(responseCommitment));
 
-    const { prooverSyncData, responseDecommitment } = proover.processChallengeDecommitment(challengeDecommitment);
+    const { responseDecommitment, proverSyncData } = proover.processChallengeDecommitment(challengeDecommitment);
 
-    const verifierSyncData = rewrap(VerifierSyncData, verifier.processResponseDecommitment(responseDecommitment));
+    const verifierSyncData = rewrap(VerifierSyncData, verifier.processResponseDecommitment(rewrap(ResponseDecommitment, responseDecommitment)));
 
-    distributedKey.importSyncData(prooverSyncData);
+    distributedKey.importSyncData(rewrap(ProverSyncData, proverSyncData));
     distributedKeyShard.importSyncData(verifierSyncData);
 
     console.log(distributedKey.compoundPublic());

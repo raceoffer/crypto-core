@@ -1,0 +1,15 @@
+syntax = 'proto3';
+
+message PaillierPublicKey {
+  int32 bits = 1;
+  bytes n = 2;
+  bytes n2 = 3;
+  bytes np1 = 4;
+  bytes rncache = 5;
+}
+
+message PaillierSecretKey {
+  bytes lambda = 1;
+  bytes x = 2;
+  PaillierPublicKey pubkey = 3;
+}

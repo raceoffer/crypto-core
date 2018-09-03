@@ -1,0 +1,49 @@
+syntax = 'proto3';
+
+import "paillierkeys.proto";
+import "pedersenscheme.proto";
+
+message InitialCommitment {
+  int32 curve = 1;
+  bytes pedersen_parameters = 2;
+  bytes initial_commitment = 3;
+}
+
+message InitialDecommitment {
+  int32 curve = 1;
+  bytes public_point = 2;
+  bytes chiphertext = 3;
+  bytes initial_decommitment = 4;
+  PaillierPublicKey paillier_publicKey = 5;
+}
+
+message ResponseCommitment {
+  int32 curve = 1;
+  bytes response_commitment = 2;
+}
+
+message ResponseDecommitment {
+  int32 curve = 1;
+  bytes response_decommitment = 2;
+  bytes response = 3;
+}
+
+message ProverSyncData {
+  int32 curve = 1;
+  bytes public_point = 2;
+}
+
+message PaillierProver {
+  int32 curve = 1;
+  bytes local_private_key = 2;
+  bytes alpha = 3;
+  bytes remote_public_point = 4;
+  bytes remote_pedersen_parameters = 5;
+  bytes local_chiphertext = 6;
+  bytes local_initial_decommitment = 7;
+  bytes remote_reveal_commitment = 8;
+  bytes local_response_decommitment = 9;
+  PaillierPublicKey localPaillier_public_key = 10;
+  PaillierSecretKey localPaillier_secret_key = 11;
+  PedersenScheme local_pedersen_scheme = 12;
+}
