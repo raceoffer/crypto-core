@@ -2,7 +2,7 @@ syntax = 'proto3';
 
 import "paillierkeys.proto";
 
-message DistributedKey {
+message DistributedEcdsaKey {
   int32 curve = 1;
   bytes local_private_key = 2;
   bytes remote_public_point = 3;
@@ -11,7 +11,7 @@ message DistributedKey {
   PaillierSecretKey local_paillier_secret_key = 6;
 }
 
-message DistributedKeyShard {
+message DistributedEcdsaKeyShard {
   int32 curve = 1;
   bytes local_private_key = 2;
   bytes remote_public_point = 3;

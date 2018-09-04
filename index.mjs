@@ -12,15 +12,14 @@ export { InsightProvider } from './lib/provider/insightprovider';
 
 export { KeyPair } from './lib/primitives/eddsa/keypair';
 
-export { DistributedKey as DistributedKeyEcdsa, DistributedKeyShard as DistributedKeyShardEcdsa } from './lib/primitives/ecdsa/distributedkey';
-
-export { PaillierPublicKey, PaillierSecretKey } from './lib/primitives/ecdsa/paillierkeys';
-
 export { SchnorrProof } from './lib/primitives/schnorrproof';
 export { PedersenScheme } from './lib/primitives/pedersenscheme';
-export { PaillierProver, InitialCommitment, InitialDecommitment, ResponseCommitment, ProverSyncData, ResponseDecommitment } from './lib/primitives/ecdsa/paillierprover';
-export { PaillierVerifier, InitialData, ChallengeCommitment, ChallengeDecommitment, VerifierSyncData } from './lib/primitives/ecdsa/paillierverifier';
-export { DistributedSigner, DistributedSignerShard, EntropyCommitment, EntropyData, EntropyDecommitment, PartialSignature } from './lib/primitives/ecdsa/distributedsigner';
+export { PaillierPublicKey, PaillierSecretKey } from './lib/primitives/ecdsa/paillierkeys';
+
+export { DistributedEcdsaKey, DistributedEcdsaKeyShard } from './lib/primitives/ecdsa/distributedkey';
+export { DistributedEcdsaSyncSession, DistributedEcdsaSyncSessionShard } from './lib/primitives/ecdsa/distributedsyncsession';
+export { DistributedEcdsaSignSession, DistributedEcdsaSignSessionShard } from './lib/primitives/ecdsa/distributedsignsession';
+
 export { Signer as SignerEddsa } from './lib/primitives/eddsa/signer';
 
 export { BitcoinTransaction } from './lib/transaction/bitcore/bitcointransaction';

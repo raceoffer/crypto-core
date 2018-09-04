@@ -4,44 +4,44 @@ import "paillierkeys.proto";
 import "pedersenscheme.proto";
 import "schnorrproof.proto";
 
-message EntropyCommitment {
+message EcdsaEntropyCommitment {
   int32 curve = 1;
   bytes pedersen_parameters = 2;
   bytes entropy_commitment = 3;
 }
 
-message EntropyDecommitment {
+message EcdsaEntropyDecommitment {
   int32 curve = 1;
   bytes public_entropy = 2;
   bytes entropy_decommitment = 3;
   SchnorrProof schnorr_proof = 4;
 }
 
-message EntropyData {
+message EcdsaEntropyData {
   int32 curve = 1;
   bytes public_entropy = 2;
   SchnorrProof schnorr_proof = 3;
 }
 
-message PartialSignature {
+message EcdsaPartialSignature {
   int32 curve = 1;
   bytes partial_signature = 2;
 }
 
-message EntropyCommitmentMessage {
+message EcdsaEntropyCommitmentMessage {
   int32 curve = 1;
   bytes public_entropy = 2;
   SchnorrProof schnorr_proof = 3;
 }
 
-message Signature {
+message EcdsaSignature {
   int32 curve = 1;
   bytes compoundScalar_entropy = 2;
   bytes signature = 3;
   int32 recovery_parameter = 4;
 }
 
-message DistributedSigner {
+message DistributedEcdsaSignSession {
   int32 curve = 1;
   bytes local_private_key = 2;
   bytes message = 3;
@@ -54,7 +54,7 @@ message DistributedSigner {
   PedersenScheme local_pedersen_scheme = 10;
 }
 
-message DistributedSignerShard {
+message DistributedEcdsaSignSessionShard {
   int32 curve = 1;
   bytes local_private_key = 2;
   bytes message = 3;

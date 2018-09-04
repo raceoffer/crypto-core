@@ -1,7 +1,7 @@
 syntax = 'proto3';
 
 import "distributedkey.proto";
-import "distributedsigner.proto";
+import "distributedsignsession.proto";
 
 message Output {
   int64 satoshis = 1;
@@ -33,32 +33,32 @@ message BitcoreTransaction {
 }
 
 message BitcoreEntropyCommitment {
-  repeated EntropyCommitment entropy_commitment = 1;
+  repeated EcdsaEntropyCommitment entropy_commitment = 1;
 }
 
 message BitcoreEntropyDecommitment {
-  repeated EntropyDecommitment entropy_decommitment = 1;
+  repeated EcdsaEntropyDecommitment entropy_decommitment = 1;
 }
 
 message BitcoreSignature {
-  repeated DistributedKey mapping = 1;
-  repeated Signature signature = 2;
+  repeated DistributedEcdsaKey mapping = 1;
+  repeated EcdsaSignature signature = 2;
 }
 
 message BitcoreSignSession {
-  repeated DistributedKey mapping = 1;
-  repeated DistributedSigner signers = 2;
+  repeated DistributedEcdsaKey mapping = 1;
+  repeated DistributedEcdsaSignSession signers = 2;
 }
 
 message BitcoreEntropyData {
-  repeated EntropyData entropyData = 1;
+  repeated EcdsaEntropyData entropyData = 1;
 }
 
 message BitcorePartialSignature {
-  repeated PartialSignature partial_signature = 1;
+  repeated EcdsaPartialSignature partial_signature = 1;
 }
 
 message BitcoreSignSessionShard {
-  repeated DistributedKeyShard mapping = 1;
-  repeated DistributedSignerShard signers = 2;
+  repeated DistributedEcdsaKeyShard mapping = 1;
+  repeated DistributedEcdsaSignSessionShard signers = 2;
 }

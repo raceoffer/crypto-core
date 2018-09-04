@@ -15,16 +15,16 @@ describe('BTC', () => {
     const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
     const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
 
-    const { publicKey, secretKey } = core.DistributedKeyEcdsa.generatePaillierKeys();
+    const { publicKey, secretKey } = core.DistributedEcdsaKey.generatePaillierKeys();
 
-    const distributedKey = rewrap(core.DistributedKeyEcdsa.fromOptions({
+    const distributedKey = rewrap(core.DistributedEcdsaKey.fromOptions({
       curve: core.Curve.secp256k1,
       secret: initiatorPrivateBytes,
       localPaillierPublicKey: publicKey,
       localPaillierSecretKey: secretKey
     }));
 
-    const distributedKeyShard = rewrap(core.DistributedKeyShardEcdsa.fromOptions({
+    const distributedKeyShard = rewrap(core.DistributedEcdsaKeyShard.fromOptions({
       curve: core.Curve.secp256k1,
       secret: verifierPrivateBytes
     }));
