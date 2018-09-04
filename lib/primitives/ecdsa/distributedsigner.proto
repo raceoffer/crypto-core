@@ -1,0 +1,35 @@
+syntax = 'proto3';
+
+import "paillierkeys.proto";
+import "pedersenscheme.proto";
+import "schnorrproof.proto";
+
+message EntropyCommitment {
+  int32 curve = 1;
+  bytes pedersenParameters = 2;
+  bytes entropyCommitment = 3;
+}
+
+message EntropyDecommitment {
+  int32 curve = 1;
+  bytes publicEntropy = 2;
+  bytes entropyDecommitment = 3;
+  SchnorrProof schnorrProof = 4;
+}
+
+message EntropyData {
+  int32 curve = 1;
+  bytes publicEntropy = 2;
+  SchnorrProof schnorrProof = 3;
+}
+
+message PartialSignature {
+  int32 curve = 1;
+  bytes partialSignature = 2;
+}
+
+message EntropyCommitmentMessage {
+  bytes publicEntropy = 1;
+  SchnorrProof schnorrProof = 2;
+}
+

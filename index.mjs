@@ -20,7 +20,7 @@ export { SchnorrProof } from './lib/primitives/schnorrproof';
 export { PedersenScheme } from './lib/primitives/pedersenscheme';
 export { PaillierProver, InitialCommitment, InitialDecommitment, ResponseCommitment, ProverSyncData, ResponseDecommitment } from './lib/primitives/ecdsa/paillierprover';
 export { PaillierVerifier, InitialData, ChallengeCommitment, ChallengeDecommitment, VerifierSyncData } from './lib/primitives/ecdsa/paillierverifier';
-export { Signer as SignerEcdsa } from './lib/primitives/ecdsa/signer';
+export { DistributedSigner, DistributedSignerShard, EntropyCommitment, EntropyData, EntropyDecommitment, PartialSignature } from './lib/primitives/ecdsa/distributedsigner';
 export { Signer as SignerEddsa } from './lib/primitives/eddsa/signer';
 
 export { BitcoinTransaction } from './lib/transaction/bitcore/bitcointransaction';

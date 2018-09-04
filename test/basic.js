@@ -42,12 +42,13 @@ describe('Basic', () => {
     const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
     const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
 
-    const paillierKeys = DistributedKeyEcdsa.generatePaillierKeys();
+    const { publicKey, secretKey } = DistributedKeyEcdsa.generatePaillierKeys();
 
     const distributedKey = rewrap(DistributedKeyEcdsa, DistributedKeyEcdsa.fromOptions({
       curve: Curve.secp256k1,
       secret: initiatorPrivateBytes,
-      paillierKeys
+      localPaillierPublicKey: publicKey,
+      localPaillierSecretKey: secretKey
     }));
 
     const distributedKeyShard = rewrap(DistributedKeyShardEcdsa, DistributedKeyShardEcdsa.fromOptions({
@@ -55,19 +56,19 @@ describe('Basic', () => {
       secret: verifierPrivateBytes
     }));
 
-    const proover = rewrap(PaillierProover, distributedKey.startSyncSession());
+    const prover = rewrap(PaillierProover, distributedKey.startSyncSession());
     const verifier = rewrap(PaillierVerifier, distributedKeyShard.startSyncSession());
 
-    const initialCommitment = rewrap(InitialCommitment, proover.createInitialCommitment());
+    const initialCommitment = rewrap(InitialCommitment, prover.createInitialCommitment());
     const initialData = rewrap(InitialData, verifier.processInitialCommitment(initialCommitment));
 
-    const initialDecommitment = rewrap(InitialDecommitment, proover.processInitialData(initialData));
+    const initialDecommitment = rewrap(InitialDecommitment, prover.processInitialData(initialData));
     const challengeCommitment = rewrap(ChallengeCommitment, verifier.processInitialDecommitment(initialDecommitment));
 
-    const responseCommitment = rewrap(ResponseCommitment, proover.processChallengeCommitment(challengeCommitment));
+    const responseCommitment = rewrap(ResponseCommitment, prover.processChallengeCommitment(challengeCommitment));
     const challengeDecommitment = rewrap(ChallengeDecommitment, verifier.processResponseCommitment(responseCommitment));
 
-    const { responseDecommitment, proverSyncData } = proover.processChallengeDecommitment(challengeDecommitment);
+    const { responseDecommitment, proverSyncData } = prover.processChallengeDecommitment(challengeDecommitment);
 
     const verifierSyncData = rewrap(VerifierSyncData, verifier.processResponseDecommitment(rewrap(ResponseDecommitment, responseDecommitment)));
 
@@ -76,5 +77,18 @@ describe('Basic', () => {
 
     console.log(distributedKey.compoundPublic());
     console.log(distributedKeyShard.compoundPublic());
+
+    const distributedSigner = distributedKey.startSignSession(Buffer.from('ffaaddaa0066ff', 'hex'));
+    const distributedSignerShard = distributedKeyShard.startSignSession(Buffer.from('ffaaddaa0066ff', 'hex'));
+
+    const entropyCommitment = distributedSigner.createEntropyCommitment();
+    const entropyData = distributedSignerShard.processEntropyCommitment(entropyCommitment);
+
+    const entropyDecommitment = distributedSigner.processEntropyData(entropyData);
+    const partialSignature = distributedSignerShard.processEntropyDecommitment(entropyDecommitment);
+
+    const signature = distributedSigner.finalizeSignature(partialSignature);
+
+    console.log(signature);
   }).timeout(10000);
 });
