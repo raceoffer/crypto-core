@@ -47,7 +47,7 @@ message PaillierVerifier {
 }
 
 message InitialCommitmentMessage {
-  PaillierPublicKey paillierPublicKey = 1;
+  PaillierPublicKey paillier_public_key = 1;
   bytes publicPoint = 2;
   bytes chiphertext = 3;
 }
