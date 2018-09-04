@@ -1,21 +1,10 @@
 const chai = require('chai');
 const core = require('..');
 
-const toJSON = core.Convert.toJSON;
-const fromJSON = core.Convert.fromJSON;
 const toBytes = core.Convert.toJSON;
 const fromBytes = core.Convert.fromJSON;
 
-const encodeBuffer = core.Convert.encodeBuffer;
-const encodeBN = core.Convert.encodeBN;
-const encodeBigInteger = core.Convert.encodeBigInteger;
-const encodePoint = core.Convert.encodePoint;
-
-const matchCurve = core.matchCurve;
-
 const Curve = core.Curve;
-const PaillierPublicKey = core.PaillierPublicKey;
-const PaillierSecretKey = core.PaillierSecretKey;
 const PaillierProover = core.PaillierProver;
 const PaillierVerifier = core.PaillierVerifier;
 const KeyChain = core.KeyChain;
@@ -75,9 +64,6 @@ describe('Basic', () => {
     distributedKey.importSyncData(rewrap(ProverSyncData, proverSyncData));
     distributedKeyShard.importSyncData(verifierSyncData);
 
-    console.log(distributedKey.compoundPublic());
-    console.log(distributedKeyShard.compoundPublic());
-
     const distributedSigner = distributedKey.startSignSession(Buffer.from('ffaaddaa0066ff', 'hex'));
     const distributedSignerShard = distributedKeyShard.startSignSession(Buffer.from('ffaaddaa0066ff', 'hex'));
 
@@ -88,7 +74,5 @@ describe('Basic', () => {
     const partialSignature = distributedSignerShard.processEntropyDecommitment(entropyDecommitment);
 
     const signature = distributedSigner.finalizeSignature(partialSignature);
-
-    console.log(signature);
   }).timeout(10000);
 });
