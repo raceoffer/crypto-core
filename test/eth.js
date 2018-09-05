@@ -47,11 +47,11 @@ describe('ETH', () => {
     const responseCommitment = rewrap(prover.processChallengeCommitment(challengeCommitment));
     const challengeDecommitment = rewrap(verifier.processResponseCommitment(responseCommitment));
 
-    const { responseDecommitment, proverSyncData } = prover.processChallengeDecommitment(challengeDecommitment);
+    const { responseDecommitment, syncData } = prover.processChallengeDecommitment(challengeDecommitment);
 
     const verifierSyncData = rewrap(verifier.processResponseDecommitment(rewrap(responseDecommitment)));
 
-    distributedKey.importSyncData(rewrap(proverSyncData));
+    distributedKey.importSyncData(rewrap(syncData));
     distributedKeyShard.importSyncData(verifierSyncData);
 
     const ethWallet = EthereumWallet.fromOptions({
