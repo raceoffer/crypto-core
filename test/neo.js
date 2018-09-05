@@ -1,28 +1,37 @@
 const chai = require('chai');
-const core = require('..');
 
-const rewrap = (value) => core.Convert.fromBytes(value.constructor, core.Convert.toBytes(value));
+const {
+  KeyChain,
+  DistributedEcdsaKey,
+  DistributedEcdsaKeyShard,
+  NeoTransaction,
+  NeoWallet,
+  Convert,
+  Curve
+} = require('..');
+
+const rewrap = (value) => Convert.fromBytes(value.constructor, Convert.toBytes(value));
 
 const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
 
 describe('NEO', () => {
   it('should sign a transaction transferring 1 neo to itself', async () => {
-    const keyChain = core.KeyChain.fromSeed(seed);
+    const keyChain = KeyChain.fromSeed(seed);
 
     const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
     const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
 
-    const { publicKey, secretKey } = core.DistributedEcdsaKey.generatePaillierKeys();
+    const { publicKey, secretKey } = DistributedEcdsaKey.generatePaillierKeys();
 
-    const distributedKey = rewrap(core.DistributedEcdsaKey.fromOptions({
-      curve: core.Curve.p256,
+    const distributedKey = rewrap(DistributedEcdsaKey.fromOptions({
+      curve: Curve.p256,
       secret: initiatorPrivateBytes,
       localPaillierPublicKey: publicKey,
       localPaillierSecretKey: secretKey
     }));
 
-    const distributedKeyShard = rewrap(core.DistributedEcdsaKeyShard.fromOptions({
-      curve: core.Curve.p256,
+    const distributedKeyShard = rewrap(DistributedEcdsaKeyShard.fromOptions({
+      curve: Curve.p256,
       secret: verifierPrivateBytes
     }));
 
@@ -45,15 +54,15 @@ describe('NEO', () => {
     distributedKey.importSyncData(rewrap(proverSyncData));
     distributedKeyShard.importSyncData(verifierSyncData);
 
-    const neoWallet = core.NeoWallet.fromOptions({
-      network: core.NeoWallet.Testnet,
+    const neoWallet = NeoWallet.fromOptions({
+      network: NeoWallet.Testnet,
       point: distributedKey.compoundPublic(),
     });
 
     chai.expect(neoWallet.address).to.equal('AFtgv8mDVb2nKud4L7xRWMo8AcsmHymWTn');
 
-    const iTX = rewrap(await neoWallet.prepareTransaction(core.NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(0.01)));
-    const vTX = rewrap(await neoWallet.prepareTransaction(core.NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(0.01)));
+    const iTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(0.01)));
+    const vTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(0.01)));
 
     const iSignSession = rewrap(iTX.startSignSession(distributedKey));
     const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));
