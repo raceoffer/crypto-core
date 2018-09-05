@@ -15,8 +15,30 @@ const { PedersenScheme } = require('./lib/primitives/pedersenscheme');
 
 const { PaillierPublicKey, PaillierSecretKey } = require('./lib/primitives/ecdsa/paillierkeys');
 const { DistributedEcdsaKey, DistributedEcdsaKeyShard } = require('./lib/primitives/ecdsa/distributedkey');
-const { DistributedEcdsaSyncSession, DistributedEcdsaSyncSessionShard } = require('./lib/primitives/ecdsa/distributedsyncsession');
-const { DistributedEcdsaSignSession, DistributedEcdsaSignSessionShard } = require('./lib/primitives/ecdsa/distributedsignsession');
+
+const {
+  DistributedEcdsaSyncSession,
+  DistributedEcdsaSyncSessionShard,
+  EcdsaInitialCommitment,
+  EcdsaInitialDecommitment,
+  EcdsaInitialData,
+  EcdsaChallengeCommitment,
+  EcdsaChallengeDecommitment,
+  EcdsaResponseCommitment,
+  EcdsaResponseDecommitment,
+  EcdsaSyncData,
+  EcdsaShardSyncData
+} = require('./lib/primitives/ecdsa/distributedsyncsession');
+
+const {
+  DistributedEcdsaSignSession,
+  DistributedEcdsaSignSessionShard,
+  EcdsaEntropyCommitment,
+  EcdsaEntropyDecommitment,
+  EcdsaEntropyData,
+  EcdsaPartialSignature,
+  EcdsaSignature
+} = require('./lib/primitives/ecdsa/distributedsignsession');
 
 const { BitcoinTransaction } = require('./lib/transaction/bitcore/bitcointransaction');
 const { BitcoinCashTransaction } = require('./lib/transaction/bitcore/bitcoincashtransaction');
@@ -50,8 +72,22 @@ module.exports = {
   DistributedEcdsaKeyShard,
   DistributedEcdsaSyncSession,
   DistributedEcdsaSyncSessionShard,
+  EcdsaInitialCommitment,
+  EcdsaInitialDecommitment,
+  EcdsaInitialData,
+  EcdsaChallengeCommitment,
+  EcdsaChallengeDecommitment,
+  EcdsaResponseCommitment,
+  EcdsaResponseDecommitment,
+  EcdsaSyncData,
+  EcdsaShardSyncData,
   DistributedEcdsaSignSession,
   DistributedEcdsaSignSessionShard,
+  EcdsaEntropyCommitment,
+  EcdsaEntropyDecommitment,
+  EcdsaEntropyData,
+  EcdsaPartialSignature,
+  EcdsaSignature,
   BitcoinTransaction,
   BitcoinCashTransaction,
   LitecoinTransaction,
