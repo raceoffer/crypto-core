@@ -18,9 +18,6 @@ export { DistributedEcdsaKey, DistributedEcdsaKeyShard } from './lib/primitives/
 export { DistributedEcdsaSyncSession, DistributedEcdsaSyncSessionShard } from './lib/primitives/ecdsa/distributedsyncsession';
 export { DistributedEcdsaSignSession, DistributedEcdsaSignSessionShard } from './lib/primitives/ecdsa/distributedsignsession';
 
-export { KeyPair } from './lib/primitives/eddsa/keypair';
-export { Signer as SignerEddsa } from './lib/primitives/eddsa/signer';
-
 export { BitcoinTransaction } from './lib/transaction/bitcore/bitcointransaction';
 export { BitcoinCashTransaction } from './lib/transaction/bitcore/bitcoincashtransaction';
 export { LitecoinTransaction } from './lib/transaction/bitcore/litecointransaction';
