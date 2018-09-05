@@ -1,0 +1,27 @@
+syntax = 'proto3';
+
+message Tx {
+  int32 chain_id = 1;
+  string gas_price = 2;
+  string nonce = 3;
+  string from = 4;
+  string value = 5;
+  string to = 6;
+  int32 gas = 7;
+}
+
+message Signature {
+  string message_hash = 1;
+  string v = 2;
+  string r = 3;
+  string s = 4;
+  string raw_transaction = 5;
+}
+
+message EthereumTransaction {
+  Tx tx = 1;
+  bool data = 2;
+  string rlp_encoded = 3;
+  bytes hash = 4;
+  Signature signature = 5;
+}

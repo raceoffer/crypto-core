@@ -1,8 +1,9 @@
 const chai = require('chai');
 const core = require('..');
 
+const rewrap = (value) => core.Convert.fromBytes(value.constructor, core.Convert.toBytes(value));
+
 const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
-const rewrap = arg => core.Marshal.unwrap(JSON.parse(JSON.stringify(core.Marshal.wrap(arg))));
 
 describe('NEO', () => {
   it('should sign a transaction transferring 1 neo to itself', async () => {
@@ -11,80 +12,62 @@ describe('NEO', () => {
     const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
     const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
 
-    const paillierKeys = rewrap(core.CompoundKeyEcdsa.generatePaillierKeys());
+    const { publicKey, secretKey } = core.DistributedEcdsaKey.generatePaillierKeys();
 
-    const initiator = rewrap(core.CompoundKeyEcdsa.fromOptions({
-      curve: 'p256',
+    const distributedKey = rewrap(core.DistributedEcdsaKey.fromOptions({
+      curve: core.Curve.p256,
       secret: initiatorPrivateBytes,
-      paillierKeys
+      localPaillierPublicKey: publicKey,
+      localPaillierSecretKey: secretKey
     }));
 
-    const verifier = rewrap(core.CompoundKeyEcdsa.fromOptions({
-      curve: 'p256',
-      secret: verifierPrivateBytes,
-      paillierKeys
+    const distributedKeyShard = rewrap(core.DistributedEcdsaKeyShard.fromOptions({
+      curve: core.Curve.p256,
+      secret: verifierPrivateBytes
     }));
 
-    const iProover = rewrap(initiator.startSyncSession());
-    const vProover = rewrap(verifier.startSyncSession());
+    const prover = rewrap(distributedKey.startSyncSession());
+    const verifier = rewrap(distributedKeyShard.startSyncSession());
 
-    const iiCommitment = rewrap(iProover.createInitialCommitment());
-    const viCommitment = rewrap(vProover.createInitialCommitment());
+    const initialCommitment = rewrap(prover.createInitialCommitment());
+    const initialData = rewrap(verifier.processInitialCommitment(initialCommitment));
 
-    const iiDecommitment = rewrap(iProover.processInitialCommitment(viCommitment));
-    const viDecommitment = rewrap(vProover.processInitialCommitment(iiCommitment));
+    const initialDecommitment = rewrap(prover.processInitialData(initialData));
+    const challengeCommitment = rewrap(verifier.processInitialDecommitment(initialDecommitment));
 
-    const iVerifier = rewrap(iProover.processInitialDecommitment(viDecommitment));
-    const vVerifier = rewrap(vProover.processInitialDecommitment(iiDecommitment));
+    const responseCommitment = rewrap(prover.processChallengeCommitment(challengeCommitment));
+    const challengeDecommitment = rewrap(verifier.processResponseCommitment(responseCommitment));
 
-    const ivCommitment = rewrap(iVerifier.createCommitment());
-    const vvCommitment = rewrap(vVerifier.createCommitment());
+    const { responseDecommitment, proverSyncData } = prover.processChallengeDecommitment(challengeDecommitment);
 
-    const ipCommitment = rewrap(iProover.processCommitment(vvCommitment));
-    const vpCommitment = rewrap(vProover.processCommitment(ivCommitment));
+    const verifierSyncData = rewrap(verifier.processResponseDecommitment(rewrap(responseDecommitment)));
 
-    const ivDecommitment = rewrap(iVerifier.processCommitment(vpCommitment));
-    const vvDecommitment = rewrap(vVerifier.processCommitment(ipCommitment));
-
-    const ipDecommitment = rewrap(iProover.processDecommitment(vvDecommitment));
-    const vpDecommitment = rewrap(vProover.processDecommitment(ivDecommitment));
-
-    const iSyncData = rewrap(iVerifier.processDecommitment(vpDecommitment));
-    const vSyncData = rewrap(vVerifier.processDecommitment(ipDecommitment));
-
-    initiator.importSyncData(iSyncData);
-    verifier.importSyncData(vSyncData);
+    distributedKey.importSyncData(rewrap(proverSyncData));
+    distributedKeyShard.importSyncData(verifierSyncData);
 
     const neoWallet = core.NeoWallet.fromOptions({
       network: core.NeoWallet.Testnet,
-      point: initiator.compoundPublic(),
+      point: distributedKey.compoundPublic(),
     });
 
     chai.expect(neoWallet.address).to.equal('AFtgv8mDVb2nKud4L7xRWMo8AcsmHymWTn');
 
-    let iTX = rewrap(await neoWallet.prepareTransaction(rewrap(core.NeoTransaction.create()), neoWallet.address, neoWallet.toInternal(1)));
-    let vTX = rewrap(await neoWallet.prepareTransaction(rewrap(core.NeoTransaction.create()), neoWallet.address, neoWallet.toInternal(1)));
+    const iTX = rewrap(await neoWallet.prepareTransaction(core.NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(0.01)));
+    const vTX = rewrap(await neoWallet.prepareTransaction(core.NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(0.01)));
 
-    iTX.startSignSession(initiator);
-    vTX.startSignSession(verifier);
+    const iSignSession = rewrap(iTX.startSignSession(distributedKey));
+    const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));
 
-    const iSCommitment = rewrap(iTX.createCommitment());
-    const vSCommitment = rewrap(vTX.createCommitment());
+    const entropyCommitment = rewrap(iSignSession.createEntropyCommitment());
+    const entropyData = rewrap(vSignSession.processEntropyCommitment(entropyCommitment));
 
-    const iSDecommitment = rewrap(iTX.processCommitment(vSCommitment));
-    const vSDecommitment = rewrap(vTX.processCommitment(iSCommitment));
+    const entropyDecommitment = rewrap(iSignSession.processEntropyData(entropyData));
+    const partialSignature = rewrap(vSignSession.processEntropyDecommitment(entropyDecommitment));
 
-    iTX.processDecommitment(vSDecommitment);
-    vTX.processDecommitment(iSDecommitment);
+    const signature = rewrap(iSignSession.finalizeSignature(partialSignature));
 
-    const vPartialSignature = rewrap(vTX.computeSignature());
+    iTX.applySignature(signature);
 
-    iTX.applySignature(vPartialSignature);
-
-    iTX = rewrap(iTX);
-
-    chai.expect(iTX.verify()).to.be.true;
-
-
+    chai.expect(rewrap(iTX).verify()).to.be.true;
   }).timeout(10000);
 });

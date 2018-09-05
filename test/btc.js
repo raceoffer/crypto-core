@@ -1,10 +1,7 @@
 const chai = require('chai');
 const core = require('..');
 
-const toBytes = core.Convert.toBytes;
-const fromBytes = core.Convert.fromBytes;
-
-const rewrap = (value) => fromBytes(value.constructor, toBytes(value));
+const rewrap = (value) => core.Convert.fromBytes(value.constructor, core.Convert.toBytes(value));
 
 const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
 
@@ -56,8 +53,8 @@ describe('BTC', () => {
 
     chai.expect(btcWallet.address).to.equal('mxp56RZQeyJk5duzbL3nch5NHweovqBnJR');
 
-    let iTX = rewrap(await btcWallet.prepareTransaction(core.BitcoinTransaction.create(), btcWallet.address, btcWallet.toInternal(0.01)));
-    let vTX = rewrap(await btcWallet.prepareTransaction(core.BitcoinTransaction.create(), btcWallet.address, btcWallet.toInternal(0.01)));
+    const iTX = rewrap(await btcWallet.prepareTransaction(core.BitcoinTransaction.create(), btcWallet.address, btcWallet.toInternal(0.01)));
+    const vTX = rewrap(await btcWallet.prepareTransaction(core.BitcoinTransaction.create(), btcWallet.address, btcWallet.toInternal(0.01)));
 
     const iSignSession = rewrap(iTX.startSignSession(distributedKey));
     const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));
@@ -72,6 +69,6 @@ describe('BTC', () => {
 
     iTX.applySignature(signature);
 
-    chai.expect(iTX.verify()).to.be.true;
-  }).timeout(10000);
+    chai.expect(rewrap(iTX).verify()).to.be.true;
+  }).timeout(15000);
 });
