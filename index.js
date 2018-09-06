@@ -40,6 +40,16 @@ const {
   EcdsaSignature
 } = require('./lib/primitives/ecdsa/distributedsignsession');
 
+const {
+  BitcoreSignSession,
+  BitcoreSignSessionShard,
+  BitcoreEntropyCommitment,
+  BitcoreEntropyDecommitment,
+  BitcoreEntropyData,
+  BitcorePartialSignature,
+  BitcoreSignature
+} = require('./lib/transaction/bitcore/bitcoretransaction');
+
 const { BitcoinTransaction } = require('./lib/transaction/bitcore/bitcointransaction');
 const { BitcoinCashTransaction } = require('./lib/transaction/bitcore/bitcoincashtransaction');
 const { LitecoinTransaction } = require('./lib/transaction/bitcore/litecointransaction');
