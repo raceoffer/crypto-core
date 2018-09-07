@@ -1,0 +1,6 @@
+syntax = 'proto3';
+
+message TypedMessage {
+  string type = 1;
+  bytes value = 2;
+}
