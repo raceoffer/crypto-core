@@ -2,7 +2,7 @@ syntax = 'proto3';
 
 message Tx {
   int32 chain_id = 1;
-  string gas_price = 2;
+  int32 gas_price = 2;
   string nonce = 3;
   string from = 4;
   string value = 5;
