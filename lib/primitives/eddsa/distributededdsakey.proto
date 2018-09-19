@@ -1,6 +1,6 @@
 syntax = 'proto3';
 
-import "keypair.proto";
+import "eddsakeypair.proto";
 
 message DistributedEddsaKey {
   int32 curve = 1;

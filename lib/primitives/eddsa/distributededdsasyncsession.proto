@@ -2,7 +2,7 @@ syntax = 'proto3';
 
 import "schnorrproof.proto";
 import "pedersenscheme.proto";
-import "keypair.proto";
+import "eddsakeypair.proto";
 
 message EddsaCommitment {
   int32 curve = 1;

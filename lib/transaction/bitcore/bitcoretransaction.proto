@@ -1,7 +1,7 @@
 syntax = 'proto3';
 
-import "distributedkey.proto";
-import "distributedsignsession.proto";
+import "distributedecdsakey.proto";
+import "distributedecdsasignsession.proto";
 
 message Output {
   int64 satoshis = 1;

@@ -1,6 +1,6 @@
 syntax = 'proto3';
 
-import "keypair.proto";
+import "eddsakeypair.proto";
 import "pedersenscheme.proto";
 import "schnorrproof.proto";
 
