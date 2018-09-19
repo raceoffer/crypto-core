@@ -1,0 +1,29 @@
+syntax = 'proto3';
+
+message Message {
+  int32 type = 1;
+  string payload = 2;
+}
+
+message Mosaics {
+
+}
+
+message Tx {
+  int32 type = 1;
+  int32 version = 2;
+  string signer = 3;
+  int32 time_stamp = 4;
+  int32 deadline = 5;
+  string recipient = 6;
+  int32 amount = 7;
+  int32 fee = 8;
+  Message message = 9;
+  Mosaics mosaics = 10;
+}
+
+message NemTransaction {
+  Tx tx = 1;
+  bytes hash = 2;
+  string signature = 3;
+}

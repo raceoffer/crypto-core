@@ -4,6 +4,7 @@ const {
   KeyChain,
   DistributedEddsaKey,
   NemWallet,
+  NemTransaction,
   Convert,
   Curve
 } = require('..');
@@ -47,26 +48,23 @@ describe('NEM', () => {
     });
     
     chai.expect(nemWallet.address).to.equal('TBIOTLAM5TOEWV5ECCE7MR3PSQFV76BTS5IHBXX2');
+
+    const iTX = rewrap(await nemWallet.prepareTransaction(rewrap(NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
+    const vTX = rewrap(await nemWallet.prepareTransaction(rewrap(NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
     
-    // const iTX = rewrap(await nemWallet.prepareTransaction(rewrap(core.NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
-    // const vTX = rewrap(await nemWallet.prepareTransaction(rewrap(core.NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
+    const iSignSession = rewrap(iTX.startSignSession(distributedKey));
+    const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));
+
+    const entropyCommitment = rewrap(iSignSession.createEntropyCommitment());
+    const entropyData = rewrap(vSignSession.processEntropyCommitment(entropyCommitment));
+
+    const entropyDecommitment = rewrap(iSignSession.processEntropyData(entropyData));
+    const partialSignature = rewrap(vSignSession.processEntropyDecommitment(entropyDecommitment));
+
+    const signature = rewrap(iSignSession.finalizeSignature(partialSignature));
+
+    iTX.applySignature(signature);
     
-    // iTX.startSignSession(initiator);
-    // vTX.startSignSession(verifier);
-    
-    // const iSCommitment = rewrap(iTX.createCommitment());
-    // const vSCommitment = rewrap(vTX.createCommitment());
-    
-    // const iSDecommitment = rewrap(iTX.processCommitment(vSCommitment));
-    // const vSDecommitment = rewrap(vTX.processCommitment(iSCommitment));
-    
-    // iTX.processDecommitment(vSDecommitment);
-    // vTX.processDecommitment(iSDecommitment);
-    
-    // const vPartialSignature = rewrap(vTX.computeSignature());
-    
-    // iTX.applySignature(vPartialSignature);
-    
-    // chai.expect(iTX.verify()).to.be.true;
+    chai.expect(iTX.verify()).to.be.true;
   }).timeout(10000);
 });

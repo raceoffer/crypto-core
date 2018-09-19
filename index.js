@@ -67,6 +67,7 @@ const { BitcoinCashTransaction } = require('./lib/transaction/bitcore/bitcoincas
 const { LitecoinTransaction } = require('./lib/transaction/bitcore/litecointransaction');
 const { EthereumTransaction } = require('./lib/transaction/ethereum/ethereumtransaction');
 const { NeoTransaction } = require('./lib/transaction/neo/neotransaction');
+const { NemTransaction } = require('./lib/transaction/nem/nemtransaction');
 
 const { DDS } = require('./lib/primitives/dds');
 
@@ -123,6 +124,7 @@ module.exports = {
   LitecoinTransaction,
   EthereumTransaction,
   NeoTransaction,
+  NemTransaction,
   DDS,
   Curve,
   Convert,
