@@ -36,6 +36,7 @@ for (let i=0; i<files.length; ++i) {
     ' -o ' + newPath +
     ' -p ' + path.join(process.cwd(), 'lib/primitives') +
     ' -p ' + path.join(process.cwd(), 'lib/primitives/ecdsa') +
+    ' -p ' + path.join(process.cwd(), 'lib/primitives/eddsa') +
     ' ' + filePath;
 
   console.log(filePath, '->', newPath);

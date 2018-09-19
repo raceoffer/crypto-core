@@ -1,0 +1,10 @@
+syntax = 'proto3';
+
+import "keypair.proto";
+
+message DistributedEddsaKey {
+  int32 curve = 1;
+  EddsaKeyPair local_private_key = 2;
+  bytes remote_public_point = 3;
+  bytes compound_public_point = 4;
+}

@@ -1,0 +1,6 @@
+syntax = 'proto3';
+
+message EddsaKeyPair {
+  int32 curve = 1;
+  bytes secret = 2;
+}

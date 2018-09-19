@@ -48,7 +48,6 @@ describe('BTC', () => {
     const challengeDecommitment = rewrap(verifier.processResponseCommitment(responseCommitment));
 
     const { responseDecommitment, syncData } = prover.processChallengeDecommitment(challengeDecommitment);
-
     const verifierSyncData = rewrap(verifier.processResponseDecommitment(rewrap(responseDecommitment)));
 
     distributedKey.importSyncData(rewrap(syncData));

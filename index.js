@@ -14,7 +14,10 @@ const { SchnorrProof } = require('./lib/primitives/schnorrproof');
 const { PedersenScheme } = require('./lib/primitives/pedersenscheme');
 
 const { PaillierPublicKey, PaillierSecretKey } = require('./lib/primitives/ecdsa/paillierkeys');
+const { EddsaKeyPair } = require('./lib/primitives/eddsa/keypair');
+
 const { DistributedEcdsaKey, DistributedEcdsaKeyShard } = require('./lib/primitives/ecdsa/distributedkey');
+const { DistributedEddsaKey } = require('./lib/primitives/eddsa/distributedkey');
 
 const {
   DistributedEcdsaSyncSession,
@@ -39,6 +42,15 @@ const {
   EcdsaPartialSignature,
   EcdsaSignature
 } = require('./lib/primitives/ecdsa/distributedsignsession');
+
+const {
+  DistributedEddsaSyncSession,
+  DistributedEddsaSyncSessionShard,
+  EddsaCommitment,
+  EddsaDecommitment,
+  EddsaData,
+  EddsaSyncData
+} = require('./lib/primitives/eddsa/distributedsyncsession');
 
 const {
   BitcoreSignSession,
@@ -91,6 +103,14 @@ module.exports = {
   EcdsaResponseDecommitment,
   EcdsaSyncData,
   EcdsaShardSyncData,
+  EddsaKeyPair,
+  DistributedEddsaKey,
+  DistributedEddsaSyncSession,
+  DistributedEddsaSyncSessionShard,
+  EddsaCommitment,
+  EddsaDecommitment,
+  EddsaData,
+  EddsaSyncData,
   DistributedEcdsaSignSession,
   DistributedEcdsaSignSessionShard,
   EcdsaEntropyCommitment,
