@@ -41,8 +41,9 @@ message DistributedEddsaSignSession {
   bytes compound_public_point = 4;
   bytes compound_public_entropy = 5;
   bytes local_private_entropy = 6;
-  PedersenScheme local_pedersen_scheme = 7;
-  bytes local_entropy_decommitment = 8;
+  SchnorrProof local_schnorr_proof = 7;
+  PedersenScheme local_pedersen_scheme = 8;
+  bytes local_entropy_decommitment = 9;
 }
 
 message DistributedEddsaSignSessionShard {
