@@ -1,0 +1,8 @@
+syntax = 'proto3';
+
+message SchnorrProof {
+  int32 curve = 1;
+  bytes t = 2;
+  bytes c = 3;
+  bytes s = 4;
+}

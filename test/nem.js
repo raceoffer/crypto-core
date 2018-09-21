@@ -1,67 +1,70 @@
 const chai = require('chai');
-const core = require('..');
+
+const {
+  KeyChain,
+  DistributedEddsaKey,
+  NemWallet,
+  NemTransaction,
+  Convert,
+  Curve
+} = require('..');
+
+const rewrap = (value) => Convert.fromBytes(value.constructor, Convert.toBytes(value));
 
 const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
-const rewrap = arg => core.Marshal.unwrap(JSON.parse(JSON.stringify(core.Marshal.wrap(arg))));
 
 describe('NEM', () => {
   it('should sign a transaction transferring 10 nem to itself', async () => {
-    const keyChain = core.KeyChain.fromSeed(seed);
-
+    const keyChain = KeyChain.fromSeed(seed);
+    
     const initiatorPrivateBytes = keyChain.getAccountSecret(60, 0);
     const verifierPrivateBytes = keyChain.getAccountSecret(60, 1);
-
-    const initiator = rewrap(core.CompoundKeyEddsa.fromOptions({
-        curve: 'ed25519',
-        secret: initiatorPrivateBytes
+    
+    const distributedKey = rewrap(DistributedEddsaKey.fromOptions({
+      curve: Curve.ed25519,
+      secret: initiatorPrivateBytes
+    }));
+    
+    const distributedKeyShard = rewrap(DistributedEddsaKey.fromOptions({
+      curve: Curve.ed25519,
+      secret: verifierPrivateBytes
     }));
 
-    const verifier = rewrap(core.CompoundKeyEddsa.fromOptions({
-        curve: 'ed25519',
-        secret: verifierPrivateBytes
-    }));
+    const prover = rewrap(distributedKey.startSyncSession());
+    const verifier = rewrap(distributedKeyShard.startSyncSessionShard());
+    
+    const commitment = rewrap(prover.createCommitment());
+    const data = rewrap(verifier.processCommitment(commitment));
 
-    const iSyncSession = rewrap(initiator.startSyncSession());
-    const vSyncSession = rewrap(verifier.startSyncSession());
+    const { decommitment, syncData } = prover.processData(data);
+    const verifierSyncData = rewrap(verifier.processDecommitment(rewrap(decommitment)));
 
-    const iCommitment = rewrap(iSyncSession.createCommitment());
-    const vCommitment = rewrap(vSyncSession.createCommitment());
+    distributedKey.importSyncData(rewrap(syncData));
+    distributedKeyShard.importSyncData(verifierSyncData);
 
-    const iDecommitment = rewrap(iSyncSession.processCommitment(vCommitment));
-    const vDecommitment = rewrap(vSyncSession.processCommitment(iCommitment));
-
-    const iSyncData = rewrap(iSyncSession.processDecommitment(vDecommitment));
-    const vSyncData = rewrap(vSyncSession.processDecommitment(iDecommitment));
-
-    initiator.importSyncData(iSyncData);
-    verifier.importSyncData(vSyncData);
-
-    const nemWallet = core.NemWallet.fromOptions({
-        network: core.NemWallet.Testnet,
-        point: initiator.compoundPublic()
+    const nemWallet = NemWallet.fromOptions({
+      network: NemWallet.Testnet,
+      point: distributedKey.compoundPublic()
     });
-
+    
     chai.expect(nemWallet.address).to.equal('TBIOTLAM5TOEWV5ECCE7MR3PSQFV76BTS5IHBXX2');
 
-    const iTX = rewrap(await nemWallet.prepareTransaction(rewrap(core.NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
-    const vTX = rewrap(await nemWallet.prepareTransaction(rewrap(core.NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
+    const iTX = rewrap(await nemWallet.prepareTransaction(rewrap(NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
+    const vTX = rewrap(await nemWallet.prepareTransaction(rewrap(NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
+    
+    const iSignSession = rewrap(iTX.startSignSession(distributedKey));
+    const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));
 
-    iTX.startSignSession(initiator);
-    vTX.startSignSession(verifier);
+    const entropyCommitment = rewrap(iSignSession.createEntropyCommitment());
+    const entropyData = rewrap(vSignSession.processEntropyCommitment(entropyCommitment));
 
-    const iSCommitment = rewrap(iTX.createCommitment());
-    const vSCommitment = rewrap(vTX.createCommitment());
+    const entropyDecommitment = rewrap(iSignSession.processEntropyData(entropyData));
+    const partialSignature = rewrap(vSignSession.processEntropyDecommitment(entropyDecommitment));
 
-    const iSDecommitment = rewrap(iTX.processCommitment(vSCommitment));
-    const vSDecommitment = rewrap(vTX.processCommitment(iSCommitment));
+    const signature = rewrap(iSignSession.finalizeSignature(partialSignature));
 
-    iTX.processDecommitment(vSDecommitment);
-    vTX.processDecommitment(iSDecommitment);
-
-    const vPartialSignature = rewrap(vTX.computeSignature());
-
-    iTX.applySignature(vPartialSignature);
-
+    iTX.applySignature(signature);
+    
     chai.expect(iTX.verify()).to.be.true;
   }).timeout(10000);
 });

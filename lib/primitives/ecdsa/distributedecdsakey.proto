@@ -1,0 +1,21 @@
+syntax = 'proto3';
+
+import "paillierkeys.proto";
+
+message DistributedEcdsaKey {
+  int32 curve = 1;
+  bytes local_private_key = 2;
+  bytes remote_public_point = 3;
+  bytes compound_public_point = 4;
+  PaillierPublicKey local_paillier_public_key = 5;
+  PaillierSecretKey local_paillier_secret_key = 6;
+}
+
+message DistributedEcdsaKeyShard {
+  int32 curve = 1;
+  bytes local_private_key = 2;
+  bytes remote_public_point = 3;
+  bytes compound_public_point = 4;
+  bytes remoteCiphertext = 5;
+  PaillierPublicKey remote_paillier_public_key = 6;
+}

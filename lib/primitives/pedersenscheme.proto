@@ -1,0 +1,7 @@
+syntax = 'proto3';
+
+message PedersenScheme {
+  int32 curve = 1;
+  bytes a = 2;
+  bytes h = 3;
+}

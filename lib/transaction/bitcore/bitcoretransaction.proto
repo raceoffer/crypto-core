@@ -1,0 +1,64 @@
+syntax = 'proto3';
+
+import "distributedecdsakey.proto";
+import "distributedecdsasignsession.proto";
+
+message Output {
+  int64 satoshis = 1;
+  string script = 2;
+}
+
+message Input {
+  string prev_tx_id = 1;
+  int32 output_index = 2;
+  int64 sequence_number = 3;
+  string script = 4;
+  string script_string = 5;
+  Output output = 6;
+}
+
+message Tx {
+  string hash = 1;
+  int32 version = 2;
+  repeated Input inputs = 3;
+  repeated Output outputs = 4;
+  int32 n_lock_time = 5;
+  string change_script = 6;
+  int32 change_index = 7;
+}
+
+message BitcoreTransaction {
+  Tx tx = 1;
+  string network = 2;
+}
+
+message BitcoreEntropyCommitment {
+  repeated EcdsaEntropyCommitment entropy_commitment = 1;
+}
+
+message BitcoreEntropyDecommitment {
+  repeated EcdsaEntropyDecommitment entropy_decommitment = 1;
+}
+
+message BitcoreSignature {
+  repeated DistributedEcdsaKey mapping = 1;
+  repeated EcdsaSignature signature = 2;
+}
+
+message BitcoreSignSession {
+  repeated DistributedEcdsaKey mapping = 1;
+  repeated DistributedEcdsaSignSession signers = 2;
+}
+
+message BitcoreEntropyData {
+  repeated EcdsaEntropyData entropyData = 1;
+}
+
+message BitcorePartialSignature {
+  repeated EcdsaPartialSignature partial_signature = 1;
+}
+
+message BitcoreSignSessionShard {
+  repeated DistributedEcdsaKeyShard mapping = 1;
+  repeated DistributedEcdsaSignSessionShard signers = 2;
+}

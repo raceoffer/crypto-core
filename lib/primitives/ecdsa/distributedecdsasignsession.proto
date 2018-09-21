@@ -1,0 +1,69 @@
+syntax = 'proto3';
+
+import "paillierkeys.proto";
+import "pedersenscheme.proto";
+import "schnorrproof.proto";
+
+message EcdsaEntropyCommitment {
+  int32 curve = 1;
+  bytes pedersen_parameters = 2;
+  bytes entropy_commitment = 3;
+}
+
+message EcdsaEntropyDecommitment {
+  int32 curve = 1;
+  bytes public_entropy = 2;
+  bytes entropy_decommitment = 3;
+  SchnorrProof schnorr_proof = 4;
+}
+
+message EcdsaEntropyData {
+  int32 curve = 1;
+  bytes public_entropy = 2;
+  SchnorrProof schnorr_proof = 3;
+}
+
+message EcdsaPartialSignature {
+  int32 curve = 1;
+  bytes partial_signature = 2;
+}
+
+message EcdsaEntropyCommitmentMessage {
+  int32 curve = 1;
+  bytes public_entropy = 2;
+  SchnorrProof schnorr_proof = 3;
+}
+
+message EcdsaSignature {
+  int32 curve = 1;
+  bytes compoundScalar_entropy = 2;
+  bytes signature = 3;
+  int32 recovery_parameter = 4;
+}
+
+message DistributedEcdsaSignSession {
+  int32 curve = 1;
+  bytes local_private_key = 2;
+  bytes message = 3;
+  bytes local_private_entropy = 4;
+  bytes compound_public_entropy = 5;
+  bytes compound_scalar_entropy = 6;
+  bytes local_entropy_decommitment = 7;
+  PaillierSecretKey local_paillier_secret_key = 8;
+  SchnorrProof local_schnorr_proof = 9;
+  PedersenScheme local_pedersen_scheme = 10;
+}
+
+message DistributedEcdsaSignSessionShard {
+  int32 curve = 1;
+  bytes local_private_key = 2;
+  bytes message = 3;
+  bytes remote_private_ciphertext = 4;
+  bytes local_private_entropy = 5;
+  bytes compound_public_entropy = 6;
+  bytes compound_scalar_entropy = 7;
+  bytes remote_pedersen_parameters = 8;
+  bytes remote_entropy_commitment = 9;
+  PaillierPublicKey remote_paillier_public_key = 10;
+}
+

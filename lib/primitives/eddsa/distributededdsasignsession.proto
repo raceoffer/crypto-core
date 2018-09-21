@@ -1,0 +1,63 @@
+syntax = 'proto3';
+
+import "eddsakeypair.proto";
+import "pedersenscheme.proto";
+import "schnorrproof.proto";
+
+message EddsaEntropyCommitment {
+  int32 curve = 1;
+  bytes pedersen_parameters = 2;
+  bytes entropy_commitment = 3;
+}
+
+message EddsaEntropyDecommitment {
+  int32 curve = 1;
+  bytes public_entropy = 2;
+  SchnorrProof schnorr_proof = 3;
+  bytes entropy_decommitment = 4;
+}
+
+message EddsaEntropyData {
+  int32 curve = 1;
+  bytes public_entropy = 2;
+  SchnorrProof schnorr_proof = 3;
+}
+
+message EddsaPartialSignature {
+  int32 curve = 1;
+  bytes partial_signature = 2;
+}
+
+message EddsaSignature {
+  int32 curve = 1;
+  bytes compound_public_entropy = 2;
+  bytes signature = 3;
+}
+
+message DistributedEddsaSignSession {
+  int32 curve = 1;
+  EddsaKeyPair local_private_key = 2;
+  bytes message = 3;
+  bytes compound_public_point = 4;
+  bytes compound_public_entropy = 5;
+  bytes local_private_entropy = 6;
+  SchnorrProof local_schnorr_proof = 7;
+  PedersenScheme local_pedersen_scheme = 8;
+  bytes local_entropy_decommitment = 9;
+}
+
+message DistributedEddsaSignSessionShard {
+  int32 curve = 1;
+  EddsaKeyPair local_private_key = 2;
+  bytes message = 3;
+  bytes compound_public_point = 4;
+  bytes compound_public_entropy = 5;
+  bytes local_private_entropy = 6;
+  bytes remotePedersenParameters = 7;
+  bytes remoteEntropyCommitment = 8;
+}
+
+message EddsaEntropyCommitmentMessage {
+  bytes public_entropy = 1;
+  SchnorrProof schnorr_proof = 2;
+}

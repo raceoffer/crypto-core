@@ -4,8 +4,8 @@
   "description": "",
   "main": "index",
   "scripts": {
-    "transpile": "babel . --extensions \".mjs\" --out-dir .",
-    "test": "npm run transpile && mocha"
+    "build": "node build.js",
+    "test": "npm run build && mocha"
   },
   "author": "",
   "license": "ISC",
@@ -31,6 +31,7 @@
     "litecore-lib": "latest",
     "nem-sdk": "^1.6.6",
     "pbkdf2": "^3.0.16",
+    "protobufjs": "^6.8.8",
     "randombytes": "^2.0.6",
     "request-promise-native": "^1.0.5",
     "tree-model": "^1.0.7",
@@ -39,10 +40,6 @@
     "web3-utils": "^1.0.0-beta.34"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-es2015-modules-simple-commonjs": "^0.3.0",
-    "babel-preset-env": "^1.7.0",
     "chai": "^4.1.2",
     "mocha": "^5.2.0"
   }

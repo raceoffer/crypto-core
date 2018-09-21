@@ -1,0 +1,49 @@
+syntax = 'proto3';
+
+import "schnorrproof.proto";
+import "pedersenscheme.proto";
+import "eddsakeypair.proto";
+
+message EddsaCommitment {
+  int32 curve = 1;
+  bytes pedersen_parameters = 2;
+  bytes commitment = 3;
+}
+
+message EddsaDecommitment {
+  int32 curve = 1;
+  bytes public_point = 2;
+  SchnorrProof schnorr_proof = 3;
+  bytes decommitment = 4;
+}
+
+message EddsaData {
+  int32 curve = 1;
+  bytes public_point = 2;
+  SchnorrProof schnorr_proof = 3;
+}
+
+message EcdsaSyncData {
+  int32 curve = 1;
+  bytes public_point = 2;
+}
+
+message DistributedEddsaSyncSession {
+  int32 curve = 1;
+  EddsaKeyPair local_private_key = 2;
+  PedersenScheme local_pedersen_scheme = 3;
+  bytes local_schnorr_proof = 4;
+  bytes local_decommitment = 5;
+}
+
+message DistributedEddsaSyncSessionShard {
+  int32 curve = 1;
+  EddsaKeyPair local_private_key = 2;
+  bytes remote_pedersen_parameters = 3;
+  bytes remote_commitment = 4;
+}
+
+message EddsaCommitmentMessage {
+  bytes public_point = 1;
+  SchnorrProof schnorr_proof = 2;
+}
