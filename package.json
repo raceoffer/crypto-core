@@ -4,6 +4,7 @@
   "description": "",
   "main": "index",
   "scripts": {
+	"protobufjs": "pbjs",
     "build": "node build.js",
     "test": "npm run build && mocha",
     "postinstall": "npm run build"

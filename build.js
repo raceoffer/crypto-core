@@ -32,7 +32,7 @@ const files = findFiles('./lib', /\.proto$/).map(prependPath);
 for (let i=0; i<files.length; ++i) {
   const filePath = files[i];
   const newPath = filePath.replace(/\.proto$/, '.json');
-  const command = 'npm explore protobufjs -- node bin/pbjs -t json -w commonjs' +
+  const command = 'npm run protobufjs -- -t json -w commonjs' +
     ' -o ' + newPath +
     ' -p ' + path.join(process.cwd(), 'lib/primitives') +
     ' -p ' + path.join(process.cwd(), 'lib/primitives/ecdsa') +
