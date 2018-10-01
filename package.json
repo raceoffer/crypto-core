@@ -9,7 +9,8 @@
     "test": "npm run build && mocha",
     "postinstall": "npm run build"
   },
-  "author": "",
+  "author": "Caspian Technologies PTE. LTD.",
+  "repository": "https://github.com/CaspianTechnologies/crypto-core.git",
   "license": "ISC",
   "dependencies": {
     "@cityofzion/neon-js": "^3.9.2",
