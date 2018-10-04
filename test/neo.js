@@ -61,8 +61,8 @@ describe('NEO', () => {
 
     chai.expect(neoWallet.address).to.equal('AFtgv8mDVb2nKud4L7xRWMo8AcsmHymWTn');
 
-    const iTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(0.01)));
-    const vTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(0.01)));
+    const iTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(1)));
+    const vTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(1)));
 
     const iSignSession = rewrap(iTX.startSignSession(distributedKey));
     const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));
@@ -78,5 +78,7 @@ describe('NEO', () => {
     iTX.applySignature(signature);
 
     chai.expect(rewrap(iTX).verify()).to.be.true;
+
+    await neoWallet.sendSignedTransaction(iTX.toRaw());
   }).timeout(10000);
 });
