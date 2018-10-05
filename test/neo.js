@@ -78,7 +78,5 @@ describe('NEO', () => {
     iTX.applySignature(signature);
 
     chai.expect(rewrap(iTX).verify()).to.be.true;
-
-    await neoWallet.sendSignedTransaction(iTX.toRaw());
   }).timeout(10000);
 });
