@@ -10,6 +10,8 @@ const {
   Curve
 } = require('..');
 
+const BigNumber = require('bignumber.js');
+
 const rewrap = (value) => Convert.fromBytes(value.constructor, Convert.toBytes(value));
 
 const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
@@ -61,8 +63,8 @@ describe('NEO', () => {
 
     chai.expect(neoWallet.address).to.equal('AFtgv8mDVb2nKud4L7xRWMo8AcsmHymWTn');
 
-    const iTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(1)));
-    const vTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(1)));
+    const iTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(new BigNumber(1))));
+    const vTX = rewrap(await neoWallet.prepareTransaction(NeoTransaction.create(), neoWallet.address, neoWallet.toInternal(new BigNumber(1))));
 
     const iSignSession = rewrap(iTX.startSignSession(distributedKey));
     const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));

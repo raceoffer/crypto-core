@@ -10,6 +10,8 @@ const {
   Curve
 } = require('..');
 
+const BigNumber = require('bignumber.js');
+
 const rewrap = (value) => Convert.fromBytes(value.constructor, Convert.toBytes(value));
 
 const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
@@ -62,8 +64,8 @@ describe('ETH', () => {
 
     chai.expect(ethWallet.address).to.equal('0xd2A383c19e3bbC73FBbCf7f71AAC59Ec1FE65BfB');
 
-    const iTX = rewrap(await ethWallet.prepareTransaction(EthereumTransaction.create(), ethWallet.address, ethWallet.toInternal(0.01)));
-    const vTX = rewrap(await ethWallet.prepareTransaction(EthereumTransaction.create(), ethWallet.address, ethWallet.toInternal(0.01)));
+    const iTX = rewrap(await ethWallet.prepareTransaction(EthereumTransaction.create(), ethWallet.address, ethWallet.toInternal(new BigNumber(0.01))));
+    const vTX = rewrap(await ethWallet.prepareTransaction(EthereumTransaction.create(), ethWallet.address, ethWallet.toInternal(new BigNumber(0.01))));
 
     const iSignSession = rewrap(iTX.startSignSession(distributedKey));
     const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));

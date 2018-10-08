@@ -9,6 +9,8 @@ const {
   Curve
 } = require('..');
 
+const BigNumber = require('bignumber.js');
+
 const rewrap = (value) => Convert.fromBytes(value.constructor, Convert.toBytes(value));
 
 const seed = Buffer.from('9ff992e811d4b2d2407ad33b263f567698c37bd6631bc0db90223ef10bce7dca28b8c670522667451430a1cb10d1d6b114234d1c2220b2f4229b00cadfc91c4d', 'hex');
@@ -49,8 +51,8 @@ describe('NEM', () => {
     
     chai.expect(nemWallet.address).to.equal('TBIOTLAM5TOEWV5ECCE7MR3PSQFV76BTS5IHBXX2');
 
-    const iTX = rewrap(await nemWallet.prepareTransaction(rewrap(NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
-    const vTX = rewrap(await nemWallet.prepareTransaction(rewrap(NemTransaction.create()), nemWallet.address, nemWallet.toInternal(10)));
+    const iTX = rewrap(await nemWallet.prepareTransaction(rewrap(NemTransaction.create()), nemWallet.address, nemWallet.toInternal(new BigNumber(10))));
+    const vTX = rewrap(await nemWallet.prepareTransaction(rewrap(NemTransaction.create()), nemWallet.address, nemWallet.toInternal(new BigNumber(10))));
     
     const iSignSession = rewrap(iTX.startSignSession(distributedKey));
     const vSignSession = rewrap(vTX.startSignSessionShard(distributedKeyShard));
