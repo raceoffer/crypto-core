@@ -11,7 +11,7 @@
   },
   "author": "Caspian Technologies PTE. LTD.",
   "repository": "https://github.com/CaspianTechnologies/crypto-core.git",
-  "license": "ISC",
+  "license": "gpl-3.0",
   "dependencies": {
     "@cityofzion/neon-js": "^3.9.2",
     "aes-js": "^3.1.1",
